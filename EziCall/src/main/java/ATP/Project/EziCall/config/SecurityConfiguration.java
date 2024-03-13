@@ -12,9 +12,10 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import static ATP.Project.EziCall.models.Role.ADMIN;
+
 @Configuration
 @EnableWebSecurity
-//@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 @EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfiguration {
 

@@ -79,7 +79,7 @@ public class AuthenticationService {
             User user = optionalUser.get();
 
             LocalDateTime startOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
-            UserActivityLog log = userActitityLogRepository.findTopByUserIdAndStatusAndTimestampBetweenOrderByTimestampDesc(user.getUserId(), "Online",startOfDay, LocalDateTime.now());
+            UserActivityLog log = userActitityLogRepository.findTopByUserIdAndStatusAndTimestampBetweenOrderByTimestampDesc(user.getUserId(), "ONLINE",startOfDay, LocalDateTime.now());
 
             if (log != null) {
                 log.setStatus("OFFLINE");

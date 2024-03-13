@@ -112,6 +112,21 @@ public class UserService {
         return convertToUserResponse(employees);
     }
 
+    public UserResponse getEmployee(Long id) {
+
+        User existingUser = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("Không tồn tại nhân viên có id: " + id));
+
+        return new UserResponse(existingUser.getFirstname(),
+                existingUser.getLastname(),
+                existingUser.getEmail(),
+                existingUser.getPhonenumber(),
+                existingUser.getBirthDate().toString(),
+                existingUser.getGender().toString(),
+                userRepository.findLatestActivity(existingUser.getUserId())
+        );
+    }
+
     public List<UserResponse> findByName(String name) {
         List<User> employees = userRepository.findEmployeeByName(name, Role.EMPLOYEE);
 

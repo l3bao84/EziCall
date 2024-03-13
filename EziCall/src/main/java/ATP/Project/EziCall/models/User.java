@@ -77,8 +77,23 @@ public class User implements UserDetails {
         this.ticketsAssigned = ticketsAssigned;
     }
 
-    public String getUsername() {
-        return username;
+    @Override
+    public String toString() {
+        return "User{" +
+                "firstname='" + firstname + '\'' +
+                ", lastname='" + lastname + '\'' +
+                ", email='" + email + '\'' +
+                ", username='" + username + '\'' +
+                ", phonenumber='" + phonenumber + '\'' +
+                ", password='" + password + '\'' +
+                ", birthDate=" + birthDate +
+                ", gender=" + gender +
+                '}';
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
     @Override
@@ -99,29 +114,5 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
-    }
-
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "firstname='" + firstname + '\'' +
-                ", lastname='" + lastname + '\'' +
-                ", email='" + email + '\'' +
-                ", username='" + username + '\'' +
-                ", phonenumber='" + phonenumber + '\'' +
-                ", password='" + password + '\'' +
-                ", birthDate=" + birthDate +
-                ", gender=" + gender +
-                '}';
     }
 }

@@ -5,27 +5,36 @@ import ATP.Project.EziCall.exception.RegistrationFailedException;
 import ATP.Project.EziCall.exception.UserNotFoundException;
 import ATP.Project.EziCall.models.User;
 import ATP.Project.EziCall.requests.UserRequest;
+import ATP.Project.EziCall.response.UserResponse;
 import ATP.Project.EziCall.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/users")
+//@PreAuthorize("hasRole('ADMIN')")
 public class UserController {
 
     @Autowired
     private UserService userService;
 
-    @GetMapping()
+    @GetMapping("/employees")
     public ResponseEntity<?> getAll() {
         if(userService.getAll().isEmpty()) {
             return ResponseEntity.ok().body("Không có nhân viên nào trong hệ thống");
         }
         return ResponseEntity.ok().body(userService.getAll());
+    }
+
+    @GetMapping("/employee/{id}")
+    public ResponseEntity<?> getEmployee(@PathVariable Long id) {
+        UserResponse response = userService.getEmployee(id);
+        return ResponseEntity.ok().body(response);
     }
 
     @GetMapping("/search")
@@ -44,13 +53,13 @@ public class UserController {
         return ResponseEntity.ok().body(userService.findEmpOnline());
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/employee/{id}")
     public ResponseEntity<?> updateEmployee(@PathVariable Long id, @Valid @RequestBody UserRequest request) {
         User updatedUser = userService.updateEmployee(id, request);
         return ResponseEntity.ok().body("Cập nhật thông tin nhân viên thành công" + "\n" + updatedUser.toString());
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/employee/{id}")
     public ResponseEntity<?> deleteEmployee(@PathVariable Long id) {
         userService.deleteEmployee(id);
         return ResponseEntity.ok().body("Xóa thành công nhân viên có id: " + id);
