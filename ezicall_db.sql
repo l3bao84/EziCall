@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th3 13, 2024 lúc 04:53 PM
+-- Thời gian đã tạo: Th3 14, 2024 lúc 11:30 AM
 -- Phiên bản máy phục vụ: 10.4.28-MariaDB
 -- Phiên bản PHP: 8.2.4
 
@@ -36,6 +36,17 @@ CREATE TABLE `customers` (
   `phone_number` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Đang đổ dữ liệu cho bảng `customers`
+--
+
+INSERT INTO `customers` (`customer_id`, `address`, `email`, `full_name`, `gender`, `phone_number`) VALUES
+(1, '123 Đường A, Quận 1, TP.HCM', 'nguyenvana@example.com', 'Nguyễn Văn A', 'MALE', '0123456789'),
+(2, '456 Đường B, Quận 2, TP.HCM', 'tranthib@example.com', 'Trần Thị B', 'FEMALE', '0123456790'),
+(3, '789 Đường C, Quận 3, TP.HCM', 'levanc@example.com', 'Lê Văn C', 'MALE', '0123456791'),
+(4, '101 Đường D, Quận 4, TP.HCM', 'phamthid@example.com', 'Phạm Thị D', 'FEMALE', '0123456792'),
+(5, 'Ha Noi', 'bao0804@gmail.com', 'Le Duc Bao', 'MALE', '0338171052');
+
 -- --------------------------------------------------------
 
 --
@@ -65,7 +76,8 @@ INSERT INTO `employee_activity_log` (`id`, `activity_type`, `timestamp`, `user_i
 (9, 'OFFLINE', '2024-03-13 20:39:22.000000', 2),
 (10, 'OFFLINE', '2024-03-13 20:46:02.000000', 2),
 (11, 'OFFLINE', '2024-03-13 21:03:40.000000', 2),
-(12, 'OFFLINE', '2024-03-13 21:21:49.000000', 2);
+(12, 'OFFLINE', '2024-03-13 21:21:49.000000', 2),
+(13, 'OFFLINE', '2024-03-14 08:40:37.000000', 2);
 
 -- --------------------------------------------------------
 
@@ -97,7 +109,7 @@ CREATE TABLE `users` (
   `last_name` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
   `phonenumber` varchar(255) NOT NULL,
-  `role` enum('ADMIN','EMPLOYEE') DEFAULT NULL,
+  `role` enum('ADMIN','SUPPORTER','MARKETING') DEFAULT NULL,
   `username` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -107,7 +119,7 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`user_id`, `birth_date`, `email`, `first_name`, `gender`, `last_name`, `password`, `phonenumber`, `role`, `username`) VALUES
 (1, '2002-04-08', 'bao08042002@gmail.com', 'le', 'MALE', 'bao', '$2a$10$PUPVgOVGdPflPGy95I0xp.rZ2sJAwn0DgsM4QZ51.5v45nmjzF6wa', '0338171052', 'ADMIN', 'lebaodepzai'),
-(2, '2002-04-08', 'leducbao0804@gmail.com', 'le', 'OTHER', 'bao', '$2a$10$rjWtzNIiyMMtxvU2y1249uFhy0ZmqZMRdm/gqOgjst0xpaRQ2K5Ru', '0338171052', 'EMPLOYEE', 'baodepzaivl');
+(2, '2002-04-08', 'leducbao0804@gmail.com', 'le', 'OTHER', 'bao', '$2a$10$rjWtzNIiyMMtxvU2y1249uFhy0ZmqZMRdm/gqOgjst0xpaRQ2K5Ru', '0338171052', 'SUPPORTER', 'baodepzaivl');
 
 --
 -- Chỉ mục cho các bảng đã đổ
@@ -149,13 +161,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT cho bảng `customers`
 --
 ALTER TABLE `customers`
-  MODIFY `customer_id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `customer_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT cho bảng `employee_activity_log`
 --
 ALTER TABLE `employee_activity_log`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT cho bảng `tickets`
