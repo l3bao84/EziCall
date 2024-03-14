@@ -89,7 +89,11 @@ public class UserService {
     }
 
     public List<UserResponse> getAll() {
-        return userRepository.getEmployees(Role.EMPLOYEE);
+        return userRepository.getEmployees();
+    }
+
+    public List<UserResponse> filterByRole(String role) {
+        return userRepository.filterUserByRole(Role.valueOf(role));
     }
 
     public UserResponse getEmployee(Long id) {
@@ -101,10 +105,12 @@ public class UserService {
     }
 
     public List<UserResponse> findByName(String name) {
-        return userRepository.findEmployeeByName(name, Role.EMPLOYEE);
+
+        return userRepository.findEmployeeByName(name, Role.SUPPORTER);
     }
 
     public List<UserResponse> findEmpOnline() {
         return userRepository.findEmployeeOnline();
     }
+
 }

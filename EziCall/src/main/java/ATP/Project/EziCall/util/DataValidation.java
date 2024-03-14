@@ -31,5 +31,10 @@ public class DataValidation {
         return (isValidEmail && isValidPhone && isValidUsername && isValidPassword && isValidDate);
     }
 
+    public boolean isValidDataCustomer(String email, String phone) {
+        boolean isValidEmail = Pattern.compile(EMAIL_REGEX).matcher(email).matches();
+        boolean isValidPhone = Pattern.compile(PHONE_REGEX).matcher(phone).matches();
 
+        return (isValidEmail && isValidPhone);
+    }
 }

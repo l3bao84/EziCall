@@ -34,6 +34,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/register/*").permitAll()
                         .requestMatchers("/users/*").authenticated()
                         .requestMatchers("/auth/logout").authenticated()
+                        .requestMatchers("/customers/*").authenticated()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))

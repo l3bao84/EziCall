@@ -5,6 +5,7 @@ import ATP.Project.EziCall.models.UserActivityLog;
 import ATP.Project.EziCall.requests.AuthenticationRequest;
 import ATP.Project.EziCall.response.AuthenticationResponse;
 import ATP.Project.EziCall.service.AuthenticationService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +26,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<?> logout() {
+    public ResponseEntity<?> logout(HttpServletRequest request) {
         UserActivityLog logResult = authenticationService.logout();
         if (logResult != null) {
             return ResponseEntity.ok().body("Bạn đã đăng xuất.");

@@ -1,7 +1,6 @@
 package ATP.Project.EziCall.config;
 
 import ATP.Project.EziCall.service.JwtService;
-import ATP.Project.EziCall.service.RedisRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,9 +26,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private UserDetailsService userDetailsService;
 
-//    @Autowired
-//    private RedisRepository redisRepository;
-
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
                                     @NonNull HttpServletResponse response,
@@ -43,12 +39,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
         jwt = authHeader.substring(7);
-
-//        if (redisRepository.isInBlacklist(jwt)) {
-//            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
-//            return;
-//        }
-
         userEmail = jwtService.extractUsername(jwt);
         if(userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null)  {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);

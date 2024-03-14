@@ -1,6 +1,7 @@
 package ATP.Project.EziCall.models;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,6 +11,7 @@ import java.util.Set;
 @Table(name = "customers")
 @Getter
 @Setter
+@Builder
 public class Customer {
 
     @Id

@@ -39,7 +39,7 @@ public class RegisterController {
         if(result.hasErrors()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getAllErrors());
         }else {
-            return ResponseEntity.status(HttpStatus.CREATED).body(userService.register(request, Role.EMPLOYEE));
+            return ResponseEntity.status(HttpStatus.CREATED).body(userService.register(request, Role.SUPPORTER));
         }
     }
 

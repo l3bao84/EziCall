@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -39,10 +40,19 @@ public class UserController {
 
     @GetMapping("/employee/search")
     public ResponseEntity<?> searchEmployee(@RequestParam(value = "name", required = false) String name) {
-        if(userService.getAll().isEmpty()) {
-            return ResponseEntity.ok().body("Không có nhân viên nào trong hệ thống có tên: " + name);
+        if(name.equals("")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tên nhân viên không được rỗng");
+        }else {
+            if(userService.findByName(name).isEmpty()) {
+                return ResponseEntity.ok().body("Không có nhân viên nào trong hệ thống có tên: " + name);
+            }
+            return ResponseEntity.ok().body(userService.findByName(name));
         }
-        return ResponseEntity.ok().body(userService.findByName(name));
+    }
+
+    @GetMapping("/employee/filterByRole")
+    public ResponseEntity<?> filterEmployeeByRole(@RequestParam(value = "role", required = false) String role) {
+        return ResponseEntity.ok().body(userService.filterByRole(role));
     }
 
     @GetMapping("/employee/online")
@@ -54,9 +64,14 @@ public class UserController {
     }
 
     @PutMapping("/employee/{id}")
-    public ResponseEntity<?> updateEmployee(@PathVariable Long id, @Valid @RequestBody UserRequest request) {
+    public ResponseEntity<?> updateEmployee(@PathVariable Long id,
+                                            @Valid @RequestBody UserRequest request,
+                                            BindingResult result) {
+        if(result.hasErrors()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getAllErrors());
+        }
         User updatedUser = userService.updateEmployee(id, request);
-        return ResponseEntity.ok().body("Cập nhật thông tin nhân viên thành công" + "\n" + updatedUser.toString());
+        return ResponseEntity.ok().body("Cập nhật thông tin nhân viên thành công");
     }
 
     @DeleteMapping("/employee/{id}")

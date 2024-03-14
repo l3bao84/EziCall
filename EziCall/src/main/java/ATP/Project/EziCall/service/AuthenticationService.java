@@ -46,7 +46,7 @@ public class AuthenticationService {
 
             User user = (User) authentication.getPrincipal();
 
-            if(user.getRole().equals(Role.EMPLOYEE)) {
+            if(user.getRole().equals(Role.SUPPORTER)) {
                 userActitityLogRepository.save(new UserActivityLog(user, "ONLINE", LocalDateTime.now()));
             }
 
@@ -74,7 +74,7 @@ public class AuthenticationService {
         }
 
         Optional<User> optionalUser = userRepository.findByUsername(username);
-        if(optionalUser.isPresent() && optionalUser.get().getRole().equals(Role.EMPLOYEE)) {
+        if(optionalUser.isPresent() && optionalUser.get().getRole().equals(Role.SUPPORTER)) {
 
             User user = optionalUser.get();
 
@@ -86,6 +86,8 @@ public class AuthenticationService {
                 log.setTimestamp(LocalDateTime.now());
                 return userActitityLogRepository.save(log);
             }
+        }else {
+            return new UserActivityLog();
         }
         return null;
     }
