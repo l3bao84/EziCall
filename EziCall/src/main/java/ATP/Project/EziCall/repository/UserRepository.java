@@ -17,18 +17,28 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByEmail(String email);
 
-    @Query("SELECT u FROM User u WHERE u.role = :role")
-    List<User> findAllEmployee(@Param("role") Role role);
+    @Query("SELECT new ATP.Project.EziCall.response.UserResponse(u.userId, u.firstname, u.lastname, u.email, u.phonenumber, u.birthDate, u.gender, " +
+            "(SELECT a.status FROM UserActivityLog a JOIN User u ON a.user.userId = u.userId " +
+            "WHERE a.user.userId = u.userId AND FUNCTION('DATE', a.timestamp) = FUNCTION('DATE', CURRENT_TIMESTAMP) ORDER BY a.timestamp DESC LIMIT 1),u.username, u.password, u.role) " +
+            "FROM User u WHERE u.userId = :id")
+    Optional<UserResponse> getEmployee(@Param("id") long id);
 
-    @Query("SELECT u FROM User u WHERE (u.firstname LIKE %:keyword% OR u.lastname LIKE %:keyword%) AND u.role = :role")
-    List<User> findEmployeeByName(@Param("keyword") String name, @Param("role") Role role);
+    @Query("SELECT new ATP.Project.EziCall.response.UserResponse(u.userId, u.firstname, u.lastname, u.email, u.phonenumber, u.birthDate, u.gender, " +
+            "(SELECT a.status FROM UserActivityLog a JOIN User u ON a.user.userId = u.userId " +
+            "WHERE a.user.userId = u.userId AND FUNCTION('DATE', a.timestamp) = FUNCTION('DATE', CURRENT_TIMESTAMP) ORDER BY a.timestamp DESC LIMIT 1),u.username, u.password, u.role) " +
+            "FROM User u WHERE u.role = :role")
+    List<UserResponse> getEmployees(@Param("role") Role role);
 
-    @Query("SELECT u FROM User u JOIN UserActivityLog a ON u.userId = a.user.userId " +
+    @Query("SELECT new ATP.Project.EziCall.response.UserResponse(u.userId, u.firstname, u.lastname, u.email, u.phonenumber, u.birthDate, u.gender, " +
+            "(SELECT a.status FROM UserActivityLog a JOIN User u ON a.user.userId = u.userId " +
+            "WHERE a.user.userId = u.userId AND FUNCTION('DATE', a.timestamp) = FUNCTION('DATE', CURRENT_TIMESTAMP) ORDER BY a.timestamp DESC LIMIT 1),u.username, u.password, u.role) " +
+            "FROM User u WHERE (u.firstname LIKE %:keyword% OR u.lastname LIKE %:keyword%) AND u.role = :role")
+    List<UserResponse> findEmployeeByName(@Param("keyword") String name, @Param("role") Role role);
+
+    @Query("SELECT new ATP.Project.EziCall.response.UserResponse(u.userId, u.firstname, u.lastname, u.email, u.phonenumber, u.birthDate, u.gender, " +
+            "(SELECT a.status FROM UserActivityLog a JOIN User u ON a.user.userId = u.userId " +
+            "WHERE a.user.userId = u.userId AND FUNCTION('DATE', a.timestamp) = FUNCTION('DATE', CURRENT_TIMESTAMP) ORDER BY a.timestamp DESC LIMIT 1),u.username, u.password, u.role)" +
+            "FROM User u JOIN UserActivityLog a ON u.userId = a.user.userId " +
             "WHERE a.status = 'ONLINE' AND FUNCTION('DATE', a.timestamp) = FUNCTION('DATE', CURRENT_TIMESTAMP)")
-    List<User> findEmployeeOnline();
-
-    @Query("SELECT  a.status FROM UserActivityLog a " +
-            "WHERE a.user.userId = :id AND FUNCTION('DATE', a.timestamp) = FUNCTION('DATE', CURRENT_TIMESTAMP)" +
-            "ORDER BY a.timestamp DESC LIMIT 1")
-    String findLatestActivity(@Param("id") Long id);
+    List<UserResponse> findEmployeeOnline();
 }

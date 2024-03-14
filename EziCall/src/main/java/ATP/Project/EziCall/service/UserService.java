@@ -45,24 +45,6 @@ public class UserService {
                 });
     }
 
-    private List<UserResponse> convertToUserResponse(List<User> employees) {
-        List<UserResponse> userResponses = new ArrayList<>();
-        for(User employee:employees) {
-            UserResponse userResponse = new UserResponse(employee.getFirstname(),
-                    employee.getLastname(),
-                    employee.getEmail(),
-                    employee.getPhonenumber(),
-                    employee.getBirthDate().toString(),
-                    employee.getGender().toString(),
-                    userRepository.findLatestActivity(employee.getUserId())
-                    );
-
-            userResponses.add(userResponse);
-        }
-
-        return userResponses;
-    }
-
     public User register(UserRequest request, Role role)  {
 
         validateUserData(request);
@@ -107,35 +89,22 @@ public class UserService {
     }
 
     public List<UserResponse> getAll() {
-        List<User> employees = userRepository.findAllEmployee(Role.EMPLOYEE);
-
-        return convertToUserResponse(employees);
+        return userRepository.getEmployees(Role.EMPLOYEE);
     }
 
     public UserResponse getEmployee(Long id) {
 
-        User existingUser = userRepository.findById(id)
+        UserResponse existingUser = userRepository.getEmployee(id)
                 .orElseThrow(() -> new UserNotFoundException("Không tồn tại nhân viên có id: " + id));
 
-        return new UserResponse(existingUser.getFirstname(),
-                existingUser.getLastname(),
-                existingUser.getEmail(),
-                existingUser.getPhonenumber(),
-                existingUser.getBirthDate().toString(),
-                existingUser.getGender().toString(),
-                userRepository.findLatestActivity(existingUser.getUserId())
-        );
+        return existingUser;
     }
 
     public List<UserResponse> findByName(String name) {
-        List<User> employees = userRepository.findEmployeeByName(name, Role.EMPLOYEE);
-
-        return convertToUserResponse(employees);
+        return userRepository.findEmployeeByName(name, Role.EMPLOYEE);
     }
 
     public List<UserResponse> findEmpOnline() {
-        List<User> employees = userRepository.findEmployeeOnline();
-
-        return convertToUserResponse(employees);
+        return userRepository.findEmployeeOnline();
     }
 }

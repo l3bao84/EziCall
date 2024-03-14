@@ -1,13 +1,19 @@
 package ATP.Project.EziCall.response;
 
+import ATP.Project.EziCall.models.Gender;
+import ATP.Project.EziCall.models.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserResponse {
+
+    private long id;
 
     private String firstname;
 
@@ -17,9 +23,15 @@ public class UserResponse {
 
     private String phonenumber;
 
-    private String date;
+    private LocalDate date;
 
-    private String gender;
+    private Gender gender;
 
     private String activityStatus;
+
+    private String username;
+
+    private String password;
+
+    private Role role;
 }

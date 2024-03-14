@@ -37,7 +37,7 @@ public class UserController {
         return ResponseEntity.ok().body(response);
     }
 
-    @GetMapping("/search")
+    @GetMapping("/employee/search")
     public ResponseEntity<?> searchEmployee(@RequestParam(value = "name", required = false) String name) {
         if(userService.getAll().isEmpty()) {
             return ResponseEntity.ok().body("Không có nhân viên nào trong hệ thống có tên: " + name);
