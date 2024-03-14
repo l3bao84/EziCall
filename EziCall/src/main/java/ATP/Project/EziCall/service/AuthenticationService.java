@@ -7,6 +7,7 @@ import ATP.Project.EziCall.models.UserActivityLog;
 import ATP.Project.EziCall.repository.UserActitityLogRepository;
 import ATP.Project.EziCall.repository.UserRepository;
 import ATP.Project.EziCall.requests.AuthenticationRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -37,6 +38,9 @@ public class AuthenticationService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private RedisService redisService;
+
     public String authenticate(AuthenticationRequest request) {
         try {
             Authentication authentication = authenticationManager.authenticate(
@@ -58,8 +62,14 @@ public class AuthenticationService {
         }
     }
 
-    public UserActivityLog logout() {
+    public void logout(HttpServletRequest request) {
 
+        String authHeader = request.getHeader("Authorization");
+        String token = authHeader.substring(7);
+
+        System.out.println(token);
+
+        redisService.storeToken(token, 3600);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = null;
 
@@ -84,11 +94,8 @@ public class AuthenticationService {
             if (log != null) {
                 log.setStatus("OFFLINE");
                 log.setTimestamp(LocalDateTime.now());
-                return userActitityLogRepository.save(log);
+                userActitityLogRepository.save(log);
             }
-        }else {
-            return new UserActivityLog();
         }
-        return null;
     }
 }

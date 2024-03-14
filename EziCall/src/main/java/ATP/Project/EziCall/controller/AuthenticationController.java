@@ -27,12 +27,8 @@ public class AuthenticationController {
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletRequest request) {
-        UserActivityLog logResult = authenticationService.logout();
-        if (logResult != null) {
-            return ResponseEntity.ok().body("Bạn đã đăng xuất.");
-        } else {
-            return ResponseEntity.badRequest().body("Đăng xuất thất bại.");
-        }
+        authenticationService.logout(request);
+        return ResponseEntity.ok().body("Bạn đã đăng xuất.");
     }
 
     @ExceptionHandler(AuthenticationFailedException.class)
