@@ -9,11 +9,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
-public interface UserActitityLogRepository extends JpaRepository<UserActivityLog, Long> {
+public interface UserActitityLogRepository extends JpaRepository<UserActivityLog, String> {
 
     @Query("SELECT log FROM UserActivityLog log " +
             "WHERE log.user.userId = :userId AND log.status = :status AND log.timestamp " +
             "BETWEEN :startOfDay AND :endOfDay " +
             "ORDER BY log.timestamp DESC")
-    UserActivityLog findTopByUserIdAndStatusAndTimestampBetweenOrderByTimestampDesc(Long userId, String status, LocalDateTime startOfDay, LocalDateTime endOfDay);
+    UserActivityLog findTopByUserIdAndStatusAndTimestampBetweenOrderByTimestampDesc(String userId, String status, LocalDateTime startOfDay, LocalDateTime endOfDay);
 }

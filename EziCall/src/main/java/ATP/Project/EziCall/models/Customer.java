@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
 
 import java.util.Set;
 
@@ -15,9 +16,10 @@ import java.util.Set;
 public class Customer {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "customerGenerator")
+    @GenericGenerator(name = "customerGenerator", strategy = "ATP.Project.EziCall.idgenerator.CustomerIdGenerator")
     @Column(name = "customer_id")
-    private Long customerId;
+    private String customerId;
 
     @Column(name = "full_name", nullable = false)
     private String fullname;
@@ -40,7 +42,7 @@ public class Customer {
     public Customer() {
     }
 
-    public Customer(Long customerId, String fullname, String email, String phoneNumber, String address, Gender gender, Set<Ticket> tickets) {
+    public Customer(String customerId, String fullname, String email, String phoneNumber, String address, Gender gender, Set<Ticket> tickets) {
         this.customerId = customerId;
         this.fullname = fullname;
         this.email = email;

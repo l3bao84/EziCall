@@ -17,6 +17,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/customers")
@@ -38,13 +40,17 @@ public class CustomerController {
     public ResponseEntity<?> addCustomer(@Valid @RequestBody CustomerRequest customerRequest,
                                          BindingResult result) {
         if(result.hasErrors()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getAllErrors());
+            List<String> errorMessages = result.getAllErrors()
+                    .stream()
+                    .map(error -> error.getDefaultMessage())
+                    .collect(Collectors.toList());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessages);
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(customerService.insertNewCustomer(customerRequest));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateCustomer(@PathVariable Long id,
+    public ResponseEntity<?> updateCustomer(@PathVariable String id,
                                             @Valid @RequestBody CustomerRequest customerRequest,
                                             BindingResult result) {
         if(result.hasErrors()) {
@@ -55,7 +61,7 @@ public class CustomerController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> removeCustomer(@PathVariable Long id) {
+    public ResponseEntity<?> removeCustomer(@PathVariable String id) {
         customerService.removeCustomer(id);
         return ResponseEntity.ok().body("Xóa thành công khách hàng có id: " + id);
     }
@@ -70,7 +76,7 @@ public class CustomerController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getCustomer(@PathVariable Long id) {
+    public ResponseEntity<?> getCustomer(@PathVariable String id) {
         return ResponseEntity.ok().body(customerService.getCustomerById(id));
     }
 

@@ -2,9 +2,11 @@ package ATP.Project.EziCall.models;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import lombok.Builder;
 import lombok.Getter;
 import jakarta.persistence.*;
 import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDateTime;
 
@@ -12,12 +14,14 @@ import java.time.LocalDateTime;
 @Table(name = "tickets")
 @Getter
 @Setter
+@Builder
 public class Ticket {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "userGenerator")
+    @GenericGenerator(name = "userGenerator", strategy = "ATP.Project.EziCall.idgenerator.TicketIdGenerator")
     @Column(name = "ticket_id")
-    private Long ticketId;
+    private String ticketId;
 
     @ManyToOne
     @JoinColumn(name = "customer_id", nullable = false)
@@ -40,7 +44,7 @@ public class Ticket {
     public Ticket() {
     }
 
-    public Ticket(Long ticketId, Customer customer, User assignedTo, String employeeNotes, TicketStatus status, LocalDateTime createdAt) {
+    public Ticket(String ticketId, Customer customer, User assignedTo, String employeeNotes, TicketStatus status, LocalDateTime createdAt) {
         this.ticketId = ticketId;
         this.customer = customer;
         this.assignedTo = assignedTo;

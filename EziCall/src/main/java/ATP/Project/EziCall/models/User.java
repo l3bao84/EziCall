@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,9 +23,10 @@ import java.util.Set;
 public class User implements UserDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "userGenerator")
+    @GenericGenerator(name = "userGenerator", strategy = "ATP.Project.EziCall.idgenerator.UserIdGenerator")
     @Column(name = "user_id")
-    private Long userId;
+    private String userId;
 
     @Column(name = "first_name", nullable = false)
     private String firstname;
@@ -62,7 +64,7 @@ public class User implements UserDetails {
     public User() {
     }
 
-    public User(Long userId, String firstname, String lastname, String email, String username, String phonenumber, String password, LocalDate birthDate, Gender gender, Role role, Set<UserActivityLog> userActivityLogs, Set<Ticket> ticketsAssigned) {
+    public User(String userId, String firstname, String lastname, String email, String username, String phonenumber, String password, LocalDate birthDate, Gender gender, Role role, Set<UserActivityLog> userActivityLogs, Set<Ticket> ticketsAssigned) {
         this.userId = userId;
         this.firstname = firstname;
         this.lastname = lastname;

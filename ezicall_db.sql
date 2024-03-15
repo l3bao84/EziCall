@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th3 14, 2024 lúc 11:30 AM
+-- Thời gian đã tạo: Th3 15, 2024 lúc 11:05 AM
 -- Phiên bản máy phục vụ: 10.4.28-MariaDB
 -- Phiên bản PHP: 8.2.4
 
@@ -28,7 +28,7 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `customers` (
-  `customer_id` bigint(20) NOT NULL,
+  `customer_id` varchar(255) NOT NULL,
   `address` varchar(255) DEFAULT NULL,
   `email` varchar(255) NOT NULL,
   `full_name` varchar(255) NOT NULL,
@@ -41,11 +41,10 @@ CREATE TABLE `customers` (
 --
 
 INSERT INTO `customers` (`customer_id`, `address`, `email`, `full_name`, `gender`, `phone_number`) VALUES
-(1, '123 Đường A, Quận 1, TP.HCM', 'nguyenvana@example.com', 'Nguyễn Văn A', 'MALE', '0123456789'),
-(2, '456 Đường B, Quận 2, TP.HCM', 'tranthib@example.com', 'Trần Thị B', 'FEMALE', '0123456790'),
-(3, '789 Đường C, Quận 3, TP.HCM', 'levanc@example.com', 'Lê Văn C', 'MALE', '0123456791'),
-(4, '101 Đường D, Quận 4, TP.HCM', 'phamthid@example.com', 'Phạm Thị D', 'FEMALE', '0123456792'),
-(5, 'Ha Noi', 'bao0804@gmail.com', 'Le Duc Bao', 'MALE', '0338171052');
+('KH001', '123 Đường ABC, Quận 1, TP.HCM', 'nguyenvana@example.com', 'Nguyễn Văn A', 'MALE', '0123456789'),
+('KH002', '456 Đường DEF, Quận 2, TP.HCM', 'tranthib@example.com', 'Trần Thị B', 'FEMALE', '0987654321'),
+('KH003', '789 Đường GHI, Quận 3, TP.HCM', 'levanc@example.com', 'Lê Văn C', 'MALE', '0123987654'),
+('KH004', '012 Đường JKL, Quận 4, TP.HCM', 'phamhongd@example.com', 'Phạm Hồng D', 'FEMALE', '0987123456');
 
 -- --------------------------------------------------------
 
@@ -57,7 +56,7 @@ CREATE TABLE `employee_activity_log` (
   `id` bigint(20) NOT NULL,
   `activity_type` varchar(255) NOT NULL,
   `timestamp` datetime(6) NOT NULL,
-  `user_id` bigint(20) NOT NULL
+  `user_id` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -65,19 +64,7 @@ CREATE TABLE `employee_activity_log` (
 --
 
 INSERT INTO `employee_activity_log` (`id`, `activity_type`, `timestamp`, `user_id`) VALUES
-(1, 'OFFLINE', '2024-03-13 09:01:40.000000', 2),
-(2, 'OFFLINE', '2024-03-13 09:54:13.000000', 2),
-(3, 'OFFLINE', '2024-03-13 11:56:19.000000', 2),
-(4, 'OFFLINE', '2024-03-13 15:27:14.000000', 2),
-(5, 'OFFLINE', '2024-03-13 15:45:43.000000', 2),
-(6, 'OFFLINE', '2024-03-13 15:46:31.000000', 2),
-(7, 'OFFLINE', '2024-03-13 20:19:53.000000', 2),
-(8, 'OFFLINE', '2024-03-13 20:34:06.000000', 2),
-(9, 'OFFLINE', '2024-03-13 20:39:22.000000', 2),
-(10, 'OFFLINE', '2024-03-13 20:46:02.000000', 2),
-(11, 'OFFLINE', '2024-03-13 21:03:40.000000', 2),
-(12, 'OFFLINE', '2024-03-13 21:21:49.000000', 2),
-(13, 'OFFLINE', '2024-03-14 08:40:37.000000', 2);
+(1, 'OFFLINE', '2024-03-15 16:35:38.000000', 'US002');
 
 -- --------------------------------------------------------
 
@@ -86,12 +73,12 @@ INSERT INTO `employee_activity_log` (`id`, `activity_type`, `timestamp`, `user_i
 --
 
 CREATE TABLE `tickets` (
-  `ticket_id` bigint(20) NOT NULL,
+  `ticket_id` varchar(255) NOT NULL,
   `created_at` datetime(6) NOT NULL,
   `employee_notes` text DEFAULT NULL,
   `status` enum('OPEN','RESOLVED','CLOSED') NOT NULL,
-  `assigned_to` bigint(20) NOT NULL,
-  `customer_id` bigint(20) NOT NULL
+  `assigned_to` varchar(255) NOT NULL,
+  `customer_id` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -101,7 +88,7 @@ CREATE TABLE `tickets` (
 --
 
 CREATE TABLE `users` (
-  `user_id` bigint(20) NOT NULL,
+  `user_id` varchar(255) NOT NULL,
   `birth_date` date DEFAULT NULL,
   `email` varchar(255) NOT NULL,
   `first_name` varchar(255) NOT NULL,
@@ -118,8 +105,9 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`user_id`, `birth_date`, `email`, `first_name`, `gender`, `last_name`, `password`, `phonenumber`, `role`, `username`) VALUES
-(1, '2002-04-08', 'bao08042002@gmail.com', 'le', 'MALE', 'bao', '$2a$10$PUPVgOVGdPflPGy95I0xp.rZ2sJAwn0DgsM4QZ51.5v45nmjzF6wa', '0338171052', 'ADMIN', 'lebaodepzai'),
-(2, '2002-04-08', 'leducbao0804@gmail.com', 'le', 'OTHER', 'bao', '$2a$10$rjWtzNIiyMMtxvU2y1249uFhy0ZmqZMRdm/gqOgjst0xpaRQ2K5Ru', '0338171052', 'SUPPORTER', 'baodepzaivl');
+('US001', '1997-04-08', 'jack97@gmail.com', 'trinh tran', 'FEMALE', 'phuong tuan', '$2a$10$ix2p7tcCC0M2.B0FrGFcquCSZQ1d5J80JiAuWkUlUzhkKrnIefF6q', '0338171052', 'ADMIN', 'jackkosai'),
+('US002', '2002-04-08', 'bap2002@gmail.com', 'le', 'MALE', 'bao', '$2a$10$b43lGeqwh3.FcNmDKK77VeXLtPUjEHisZtYTubbnzyD7h7taW/IES', '0338171053', 'SUPPORTER', 'lebaodepzai'),
+('US003', '2002-04-08', 'lebaodepzai@gmail.com', 'le', 'MALE', 'bao', '$2a$10$TqwwymN2Cwc1OLOBB2p3G.BJ.FwMzbzcQA74KebgygC2rGQGTc1F6', '0338171052', 'SUPPORTER', 'baodzvl1111');
 
 --
 -- Chỉ mục cho các bảng đã đổ
@@ -158,28 +146,10 @@ ALTER TABLE `users`
 --
 
 --
--- AUTO_INCREMENT cho bảng `customers`
---
-ALTER TABLE `customers`
-  MODIFY `customer_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
-
---
 -- AUTO_INCREMENT cho bảng `employee_activity_log`
 --
 ALTER TABLE `employee_activity_log`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
-
---
--- AUTO_INCREMENT cho bảng `tickets`
---
-ALTER TABLE `tickets`
-  MODIFY `ticket_id` bigint(20) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT cho bảng `users`
---
-ALTER TABLE `users`
-  MODIFY `user_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Các ràng buộc cho các bảng đã đổ

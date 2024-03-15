@@ -20,7 +20,7 @@ public class DataValidation {
         boolean isValidUsername = false;
         boolean isValidPassword = false;
 
-        if(!(username.length() < 10)) {
+        if(!(username.length() < 8 || username.length() > 15)) {
             isValidUsername = true;
         }
 

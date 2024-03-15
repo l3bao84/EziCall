@@ -33,7 +33,7 @@ public class UserController {
     }
 
     @GetMapping("/employee/{id}")
-    public ResponseEntity<?> getEmployee(@PathVariable Long id) {
+    public ResponseEntity<?> getEmployee(@PathVariable String id) {
         UserResponse response = userService.getEmployee(id);
         return ResponseEntity.ok().body(response);
     }
@@ -64,7 +64,7 @@ public class UserController {
     }
 
     @PutMapping("/employee/{id}")
-    public ResponseEntity<?> updateEmployee(@PathVariable Long id,
+    public ResponseEntity<?> updateEmployee(@PathVariable String id,
                                             @Valid @RequestBody UserRequest request,
                                             BindingResult result) {
         if(result.hasErrors()) {
@@ -75,7 +75,7 @@ public class UserController {
     }
 
     @DeleteMapping("/employee/{id}")
-    public ResponseEntity<?> deleteEmployee(@PathVariable Long id) {
+    public ResponseEntity<?> deleteEmployee(@PathVariable String id) {
         userService.deleteEmployee(id);
         return ResponseEntity.ok().body("Xóa thành công nhân viên có id: " + id);
     }

@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface CustomerRepository extends JpaRepository<Customer, Long> {
+public interface CustomerRepository extends JpaRepository<Customer, String> {
 
     Optional<Customer> findByEmail(String email);
 
@@ -29,5 +29,5 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     @Query("SELECT new ATP.Project.EziCall.response.CustomerResponse(c.customerId, c.fullname, c.email, c.phoneNumber, c.address, c.gender, " +
             "(SELECT count(t) FROM Ticket t WHERE t.customer.customerId = c.customerId GROUP BY t.customer.customerId))" +
             "FROM Customer c WHERE c.customerId = :id")
-    Optional<CustomerResponse> getCustomerById(@Param("id") Long id);
+    Optional<CustomerResponse> getCustomerById(@Param("id") String id);
 }

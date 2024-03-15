@@ -41,6 +41,9 @@ public class AuthenticationService {
     @Autowired
     private RedisService redisService;
 
+    @Autowired
+    private UserService userService;
+
     public String authenticate(AuthenticationRequest request) {
         try {
             Authentication authentication = authenticationManager.authenticate(
@@ -66,24 +69,9 @@ public class AuthenticationService {
 
         String authHeader = request.getHeader("Authorization");
         String token = authHeader.substring(7);
-
-        System.out.println(token);
-
         redisService.storeToken(token, 3600);
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = null;
 
-        if (authentication != null) {
-            Object principal = authentication.getPrincipal();
-
-            if (principal instanceof UserDetails) {
-                username = ((UserDetails) principal).getUsername();
-            } else {
-                username = principal.toString();
-            }
-        }
-
-        Optional<User> optionalUser = userRepository.findByUsername(username);
+        Optional<User> optionalUser = userRepository.findByUsername(userService.getAuthenticatedUsername());
         if(optionalUser.isPresent() && optionalUser.get().getRole().equals(Role.SUPPORTER)) {
 
             User user = optionalUser.get();

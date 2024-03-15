@@ -11,6 +11,9 @@ import ATP.Project.EziCall.requests.UserRequest;
 import ATP.Project.EziCall.response.UserResponse;
 import ATP.Project.EziCall.util.DataValidation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +37,23 @@ public class UserService {
     private DataValidation dataValidation;
 
     private final static DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+
+    public String getAuthenticatedUsername() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = null;
+
+        if (authentication != null) {
+            Object principal = authentication.getPrincipal();
+
+            if (principal instanceof UserDetails) {
+                username = ((UserDetails) principal).getUsername();
+            } else {
+                username = principal.toString();
+            }
+        }
+        return username;
+    }
 
     private void validateUserData(UserRequest request) throws InvalidFormatException, RegistrationFailedException {
         if (!dataValidation.isValidData(request.getEmail(), request.getPhonenumber(), request.getUsername(), request.getPassword(), request.getBirthDate())) {
@@ -63,7 +83,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User updateEmployee(Long id, UserRequest request) {
+    public User updateEmployee(String id, UserRequest request) {
         User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("Không tồn tại nhân viên có id: " + id));
 
@@ -81,7 +101,7 @@ public class UserService {
         return userRepository.save(existingUser);
     }
 
-    public void deleteEmployee(Long id) {
+    public void deleteEmployee(String id) {
         User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("Không tồn tại nhân viên có id: " + id));
 
@@ -96,7 +116,7 @@ public class UserService {
         return userRepository.filterUserByRole(Role.valueOf(role));
     }
 
-    public UserResponse getEmployee(Long id) {
+    public UserResponse getEmployee(String id) {
 
         UserResponse existingUser = userRepository.getEmployee(id)
                 .orElseThrow(() -> new UserNotFoundException("Không tồn tại nhân viên có id: " + id));

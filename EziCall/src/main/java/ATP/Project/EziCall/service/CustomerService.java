@@ -36,7 +36,7 @@ public class CustomerService {
         return customerRepository.getAll();
     }
 
-    public CustomerResponse getCustomerById(Long id) {
+    public CustomerResponse getCustomerById(String id) {
         CustomerResponse customer = customerRepository.getCustomerById(id)
                 .orElseThrow(() -> new UserNotFoundException("Không tồn tại khách hàng có id: " + id));
 
@@ -72,7 +72,7 @@ public class CustomerService {
         return customerRepository.save(customer);
     }
 
-    public Customer updateCustomer(Long id, CustomerRequest customerRequest) {
+    public Customer updateCustomer(String id, CustomerRequest customerRequest) {
         validateCustomerData(customerRequest);
 
         Customer customer = customerRepository.findById(id)
@@ -87,7 +87,7 @@ public class CustomerService {
         return customerRepository.save(customer);
     }
 
-    public void removeCustomer(Long id) {
+    public void removeCustomer(String id) {
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("Không tồn tại khách hàng có id: " + id));
 
