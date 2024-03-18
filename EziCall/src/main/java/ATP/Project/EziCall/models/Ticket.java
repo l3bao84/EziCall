@@ -2,26 +2,30 @@ package ATP.Project.EziCall.models;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 import jakarta.persistence.*;
-import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "tickets")
 @Getter
 @Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Ticket {
 
     @Id
-    @GeneratedValue(generator = "userGenerator")
-    @GenericGenerator(name = "userGenerator", strategy = "ATP.Project.EziCall.idgenerator.TicketIdGenerator")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ticket_id")
-    private String ticketId;
+    private long ticketId;
+
+    @Column(name = "title", nullable = false)
+    private String title;
 
     @ManyToOne
     @JoinColumn(name = "customer_id", nullable = false)
@@ -31,9 +35,6 @@ public class Ticket {
     @JoinColumn(name = "assigned_to", nullable = false)
     private User assignedTo;
 
-    @Column(name = "employee_notes", columnDefinition = "TEXT")
-    private String employeeNotes;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private TicketStatus status;
@@ -41,15 +42,19 @@ public class Ticket {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    public Ticket() {
+    @OneToMany(mappedBy = "ticket", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<Note> notes;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Ticket ticket = (Ticket) o;
+        return Objects.equals(ticketId, ticket.ticketId);
     }
 
-    public Ticket(String ticketId, Customer customer, User assignedTo, String employeeNotes, TicketStatus status, LocalDateTime createdAt) {
-        this.ticketId = ticketId;
-        this.customer = customer;
-        this.assignedTo = assignedTo;
-        this.employeeNotes = employeeNotes;
-        this.status = status;
-        this.createdAt = createdAt;
+    @Override
+    public int hashCode() {
+        return Objects.hash(ticketId);
     }
 }

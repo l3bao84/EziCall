@@ -2,7 +2,7 @@ package ATP.Project.EziCall.controller;
 
 import ATP.Project.EziCall.exception.InvalidFormatException;
 import ATP.Project.EziCall.exception.RegistrationFailedException;
-import ATP.Project.EziCall.exception.UserNotFoundException;
+import ATP.Project.EziCall.exception.ObjectNotFoundException;
 import ATP.Project.EziCall.models.User;
 import ATP.Project.EziCall.requests.UserRequest;
 import ATP.Project.EziCall.response.UserResponse;
@@ -10,7 +10,6 @@ import ATP.Project.EziCall.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +17,6 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/users")
-//@PreAuthorize("hasRole('ADMIN')")
 public class UserController {
 
     @Autowired
@@ -39,15 +37,13 @@ public class UserController {
     }
 
     @GetMapping("/employee/search")
-    public ResponseEntity<?> searchEmployee(@RequestParam(value = "name", required = false) String name) {
-        if(name.equals("")) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tên nhân viên không được rỗng");
-        }else {
-            if(userService.findByName(name).isEmpty()) {
-                return ResponseEntity.ok().body("Không có nhân viên nào trong hệ thống có tên: " + name);
-            }
-            return ResponseEntity.ok().body(userService.findByName(name));
+    public ResponseEntity<?> searchEmployee(@RequestParam(value = "name", required = false) String name,
+                                            @RequestParam(value = "username", required = false) String username,
+                                            @RequestParam(value = "role", required = false) String role) {
+        if(userService.findEmployee(name,username,role).isEmpty()) {
+            return ResponseEntity.ok().body("Không có kết quả tìm kiếm với từ khóa của bạn");
         }
+        return ResponseEntity.ok().body(userService.findEmployee(name,username,role));
     }
 
     @GetMapping("/employee/filterByRole")
@@ -90,8 +86,8 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<Object> handleUserNotFoundException(UserNotFoundException ex) {
+    @ExceptionHandler(ObjectNotFoundException.class)
+    public ResponseEntity<Object> handleUserNotFoundException(ObjectNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 

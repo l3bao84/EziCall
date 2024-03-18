@@ -53,7 +53,7 @@ public class AuthenticationService {
 
             User user = (User) authentication.getPrincipal();
 
-            if(user.getRole().equals(Role.SUPPORTER)) {
+            if(user.getRole().equals(Role.SUPPORTER) || user.getRole().equals(Role.MARKETING)) {
                 userActitityLogRepository.save(new UserActivityLog(user, "ONLINE", LocalDateTime.now()));
             }
 
@@ -72,7 +72,7 @@ public class AuthenticationService {
         redisService.storeToken(token, 3600);
 
         Optional<User> optionalUser = userRepository.findByUsername(userService.getAuthenticatedUsername());
-        if(optionalUser.isPresent() && optionalUser.get().getRole().equals(Role.SUPPORTER)) {
+        if(optionalUser.isPresent() && (optionalUser.get().getRole().equals(Role.SUPPORTER) || optionalUser.get().getRole().equals(Role.MARKETING))) {
 
             User user = optionalUser.get();
 

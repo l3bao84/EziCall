@@ -24,4 +24,10 @@ public class CustomerRequest {
 
     @NotBlank(message = "Không được để trống địa chỉ")
     private String address;
+
+    @NotBlank(message = "Không được để trống tiêu đề")
+    private String title;
+
+    @NotBlank(message = "Không được để trống ghi chú")
+    private String note;
 }

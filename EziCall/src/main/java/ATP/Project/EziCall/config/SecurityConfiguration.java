@@ -31,7 +31,7 @@ public class SecurityConfiguration {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/login").permitAll()
-                        .requestMatchers("/register/*").permitAll()
+                        .requestMatchers("/register").permitAll()
                         .requestMatchers("/users/*").authenticated()
                         .requestMatchers("/auth/logout").authenticated()
                         .requestMatchers("/customers/*").authenticated()

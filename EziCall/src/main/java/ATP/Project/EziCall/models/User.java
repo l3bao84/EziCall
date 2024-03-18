@@ -28,29 +28,14 @@ public class User implements UserDetails {
     @Column(name = "user_id")
     private String userId;
 
-    @Column(name = "first_name", nullable = false)
-    private String firstname;
-
-    @Column(name = "last_name", nullable = false)
-    private String lastname;
-
-    @Column(name = "email", nullable = false)
-    private String email;
+    @Column(name = "full_name", nullable = false)
+    private String fullname;
 
     @Column(name = "username", nullable = false)
     private String username;
 
-    @Column(name = "phonenumber", nullable = false)
-    private String phonenumber;
-
     @Column(name = "password", nullable = false)
     private String password;
-
-    @Column(name = "birth_date")
-    private LocalDate birthDate;
-
-    @Enumerated(EnumType.STRING)
-    private Gender gender;
 
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -64,33 +49,14 @@ public class User implements UserDetails {
     public User() {
     }
 
-    public User(String userId, String firstname, String lastname, String email, String username, String phonenumber, String password, LocalDate birthDate, Gender gender, Role role, Set<UserActivityLog> userActivityLogs, Set<Ticket> ticketsAssigned) {
+    public User(String userId, String fullname, String username, String password, Role role, Set<UserActivityLog> userActivityLogs, Set<Ticket> ticketsAssigned) {
         this.userId = userId;
-        this.firstname = firstname;
-        this.lastname = lastname;
-        this.email = email;
+        this.fullname = fullname;
         this.username = username;
-        this.phonenumber = phonenumber;
         this.password = password;
-        this.birthDate = birthDate;
-        this.gender = gender;
         this.role = role;
         this.userActivityLogs = userActivityLogs;
         this.ticketsAssigned = ticketsAssigned;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "firstname='" + firstname + '\'' +
-                ", lastname='" + lastname + '\'' +
-                ", email='" + email + '\'' +
-                ", username='" + username + '\'' +
-                ", phonenumber='" + phonenumber + '\'' +
-                ", password='" + password + '\'' +
-                ", birthDate=" + birthDate +
-                ", gender=" + gender +
-                '}';
     }
 
     @Override

@@ -13,6 +13,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/register")
@@ -21,28 +23,19 @@ public class RegisterController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("/admin")
-    //@PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<?> registerAdmin(@Valid @RequestBody UserRequest request,
+    @PostMapping()
+    public ResponseEntity<?> register(@Valid @RequestBody UserRequest request,
                                       BindingResult result) {
         if(result.hasErrors()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getAllErrors());
+            List<String> errorMessages = result.getAllErrors()
+                    .stream()
+                    .map(error -> error.getDefaultMessage())
+                    .collect(Collectors.toList());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessages);
         }else {
-            return ResponseEntity.status(HttpStatus.CREATED).body(userService.register(request, Role.ADMIN));
+            return ResponseEntity.status(HttpStatus.CREATED).body(userService.register(request));
         }
     }
-
-    @PostMapping("/employee")
-    //@PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<?> registerEmployee(@Valid @RequestBody UserRequest request,
-                                      BindingResult result) {
-        if(result.hasErrors()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getAllErrors());
-        }else {
-            return ResponseEntity.status(HttpStatus.CREATED).body(userService.register(request, Role.SUPPORTER));
-        }
-    }
-
 
     @ExceptionHandler(RegistrationFailedException.class)
     public ResponseEntity<?> handleAuthenticationFailedException(RegistrationFailedException e) {

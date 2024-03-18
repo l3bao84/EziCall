@@ -2,14 +2,10 @@ package ATP.Project.EziCall.controller;
 
 import ATP.Project.EziCall.exception.FieldAlreadyExistException;
 import ATP.Project.EziCall.exception.InvalidFormatException;
-import ATP.Project.EziCall.exception.UserNotFoundException;
+import ATP.Project.EziCall.exception.ObjectNotFoundException;
 import ATP.Project.EziCall.models.Customer;
-import ATP.Project.EziCall.models.Gender;
-import ATP.Project.EziCall.models.Role;
-import ATP.Project.EziCall.models.User;
 import ATP.Project.EziCall.requests.CustomerRequest;
 import ATP.Project.EziCall.service.CustomerService;
-import jakarta.persistence.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +23,19 @@ public class CustomerController {
     @Autowired
     private CustomerService customerService;
 
+    @GetMapping("/call-details")
+    public ResponseEntity<?> getCallHistory() {
+        if(customerService.getCallHistory().isEmpty()) {
+            return ResponseEntity.ok().body("Không có danh sách cuộc gọi nào");
+        }
+        return ResponseEntity.ok().body(customerService.getCallHistory());
+    }
+
+    @GetMapping("/call-details/{id}")
+    public ResponseEntity<?> getCallHistoryDetails(@PathVariable String id) {
+        return ResponseEntity.ok().body(customerService.getCallHistoryDetails(id));
+    }
+
     @GetMapping("/search")
     public ResponseEntity<?> findByPhone(@RequestParam("phone") String phone) {
         if(phone.equals("")) {
@@ -36,7 +45,7 @@ public class CustomerController {
         }
     }
 
-    @PostMapping()
+    @PostMapping("")
     public ResponseEntity<?> addCustomer(@Valid @RequestBody CustomerRequest customerRequest,
                                          BindingResult result) {
         if(result.hasErrors()) {
@@ -46,7 +55,7 @@ public class CustomerController {
                     .collect(Collectors.toList());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessages);
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(customerService.insertNewCustomer(customerRequest));
+        return ResponseEntity.status(HttpStatus.CREATED).body(customerService.insertNewCustomerAndTicket(customerRequest));
     }
 
     @PutMapping("/{id}")
@@ -54,7 +63,11 @@ public class CustomerController {
                                             @Valid @RequestBody CustomerRequest customerRequest,
                                             BindingResult result) {
         if(result.hasErrors()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getAllErrors());
+            List<String> errorMessages = result.getAllErrors()
+                    .stream()
+                    .map(error -> error.getDefaultMessage())
+                    .collect(Collectors.toList());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessages);
         }
         Customer updatedCustomer = customerService.updateCustomer(id, customerRequest);
         return ResponseEntity.ok().body("Cập nhật thông tin khách hàng thành công");
@@ -80,8 +93,8 @@ public class CustomerController {
         return ResponseEntity.ok().body(customerService.getCustomerById(id));
     }
 
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<Object> handleUserNotFoundException(UserNotFoundException ex) {
+    @ExceptionHandler(ObjectNotFoundException.class)
+    public ResponseEntity<Object> handleUserNotFoundException(ObjectNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 

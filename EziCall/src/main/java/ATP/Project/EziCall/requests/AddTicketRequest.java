@@ -15,6 +15,9 @@ public class AddTicketRequest {
 
     private String status;
 
+    @NotBlank(message = "Không được để trống tiêu đề cuộc gọi")
+    private String title;
+
     @NotBlank(message = "Không được để trống ghi chú cuộc gọi")
     private String notes;
 
