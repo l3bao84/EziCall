@@ -9,6 +9,7 @@ import ATP.Project.EziCall.models.User;
 import ATP.Project.EziCall.repository.NoteRepository;
 import ATP.Project.EziCall.repository.TicketRepository;
 import ATP.Project.EziCall.requests.AppendNoteRequest;
+import ATP.Project.EziCall.response.TicketResponse;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,7 +43,7 @@ public class NoteService {
     }
 
     @Transactional
-    public Note appendNoteToTicket(Long ticketId, AppendNoteRequest request) {
+    public TicketResponse appendNoteToTicket(Long ticketId, AppendNoteRequest request) {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new ObjectNotFoundException("Không tồn tại ticket có id: " + ticketId));
 
@@ -50,10 +51,10 @@ public class NoteService {
 
         ticket.getNotes().add(note);
         ticketRepository.save(ticket);
-        return note;
+        return ticketRepository.getTicketByTicketId(ticketId);
     }
 
-    public Note updateNote(Long noteId, AppendNoteRequest request) {
+    public NotesDTO updateNote(Long noteId, AppendNoteRequest request) {
 
         Note note = noteRepository.findById(noteId)
                 .orElseThrow(() -> new ObjectNotFoundException("Không tồn tại note có id: " + noteId));
@@ -65,7 +66,7 @@ public class NoteService {
 
         note.setContent(request.getContent());
         noteRepository.save(note);
-        return note;
+        return noteRepository.getNoteById(note.getId());
     }
 
     public List<NotesDTO> getNotesByTicketId(Long id) {

@@ -1,10 +1,12 @@
 package ATP.Project.EziCall.service;
 
+import ATP.Project.EziCall.DTO.DetailTicketDTO;
 import ATP.Project.EziCall.exception.ObjectNotFoundException;
 import ATP.Project.EziCall.models.*;
 import ATP.Project.EziCall.repository.CustomerRepository;
 import ATP.Project.EziCall.repository.TicketRepository;
 import ATP.Project.EziCall.requests.AddTicketRequest;
+import ATP.Project.EziCall.requests.UpdateTicketRequest;
 import ATP.Project.EziCall.response.TicketResponse;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +51,7 @@ public class TicketService {
     }
 
     @Transactional
-    public Ticket addTicket(AddTicketRequest request) {
+    public TicketResponse addTicket(AddTicketRequest request) {
 
         User agent = userService.getUserByUsername();
 
@@ -58,17 +60,40 @@ public class TicketService {
 
         Ticket ticket = createNewTicket(customer, request.getTitle(), request.getNotes(), agent);
 
-        return ticketRepository.save(ticket);
+        ticketRepository.save(ticket);
+
+        return ticketRepository.getTicketByTicketId(ticket.getTicketId());
     }
 
-    public Ticket closeTicket(Long ticketId) {
+    public DetailTicketDTO getDetailTicket(Long id) {
+        DetailTicketDTO detailTicketDTO = ticketRepository.getDetailTicket(id)
+                .orElseThrow(() -> new ObjectNotFoundException("Không tồn tại ticket có id: " + id));
+
+        detailTicketDTO.setNotesDTOList(noteService.getNotesByTicketId(id));
+        return detailTicketDTO;
+    }
+
+    public DetailTicketDTO updateTicket(Long id, UpdateTicketRequest updateTicketRequest) {
+        Ticket ticket = ticketRepository.findById(id)
+                .orElseThrow(() -> new ObjectNotFoundException("Không tồn tại ticket có id: " + id));
+
+        ticket.setTitle(updateTicketRequest.getTitle());
+        ticketRepository.save(ticket);
+
+        DetailTicketDTO detailTicketDTO = ticketRepository.getDetailTicket(id).get();
+        detailTicketDTO.setNotesDTOList(noteService.getNotesByTicketId(id));
+
+        return detailTicketDTO;
+    }
+
+    public TicketResponse closeTicket(Long ticketId) {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new ObjectNotFoundException("Không tồn tại ticket có id: " + ticketId));
 
         ticket.setStatus(TicketStatus.CLOSED);
 
         ticketRepository.save(ticket);
-        return ticket;
+        return ticketRepository.getTicketByTicketId(ticket.getTicketId());
     }
 
     public List<TicketResponse> getTicketsByCustomerId(String id) {

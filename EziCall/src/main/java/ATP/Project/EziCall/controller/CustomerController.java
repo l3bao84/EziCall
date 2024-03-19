@@ -37,12 +37,9 @@ public class CustomerController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<?> findByPhone(@RequestParam("phone") String phone) {
-        if(phone.equals("")) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("SĐT không được rỗng");
-        }else {
-            return ResponseEntity.ok().body(customerService.findByPhone(phone));
-        }
+    public ResponseEntity<?> findByPhone(@RequestParam("phone") String phone,
+                                         @RequestParam("name") String name) {
+        return ResponseEntity.ok().body(customerService.findByPhone(phone));
     }
 
     @PostMapping("")

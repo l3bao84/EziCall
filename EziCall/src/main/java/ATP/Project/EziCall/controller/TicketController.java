@@ -2,10 +2,12 @@ package ATP.Project.EziCall.controller;
 
 import ATP.Project.EziCall.exception.ObjectNotFoundException;
 import ATP.Project.EziCall.requests.AddTicketRequest;
+import ATP.Project.EziCall.requests.UpdateTicketRequest;
 import ATP.Project.EziCall.service.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +22,26 @@ public class TicketController {
     @Autowired
     private TicketService ticketService;
 
+    @GetMapping("/{ticketId}")
+    public ResponseEntity<?> getTicket(@PathVariable Long ticketId) {
+        return ResponseEntity.ok().body(ticketService.getDetailTicket(ticketId));
+    }
+
+    @PutMapping("/update/{ticketId}")
+    public ResponseEntity<?> updateTicketTitle(@PathVariable Long ticketId,
+                                               @Valid @RequestBody UpdateTicketRequest request,
+                                               BindingResult result) {
+        if(result.hasErrors()) {
+            List<String> errorMessages = result.getAllErrors()
+                    .stream()
+                    .map(error -> error.getDefaultMessage())
+                    .collect(Collectors.toList());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessages);
+        }
+        return ResponseEntity.ok().body(ticketService.updateTicket(ticketId, request));
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping()
     public ResponseEntity<?> getAll() {
         if(ticketService.getAll().isEmpty()) {
