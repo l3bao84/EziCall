@@ -1,6 +1,7 @@
 package ATP.Project.EziCall.controller;
 
 import ATP.Project.EziCall.exception.ObjectNotFoundException;
+import ATP.Project.EziCall.exception.TicketModificationNotAllowedException;
 import ATP.Project.EziCall.exception.UnauthorizedNoteCreationException;
 import ATP.Project.EziCall.requests.AppendNoteRequest;
 import ATP.Project.EziCall.service.NoteService;
@@ -64,6 +65,11 @@ public class NoteController {
 
     @ExceptionHandler(UnauthorizedNoteCreationException.class)
     public ResponseEntity<Object> handleUnauthorizedNoteCreationException(UnauthorizedNoteCreationException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(TicketModificationNotAllowedException.class)
+    public ResponseEntity<Object> handleTicketModificationNotAllowedException(TicketModificationNotAllowedException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 }

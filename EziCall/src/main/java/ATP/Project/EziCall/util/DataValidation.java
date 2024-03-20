@@ -13,22 +13,16 @@ public class DataValidation {
 
     private final static String DATE_REGEX = "^[0-9]{1,2}\\/[0-9]{1,2}\\/[0-9]{4}$";
 
-    public boolean isValidData(String email, String phone, String username, String password, String date) {
-        boolean isValidEmail = Pattern.compile(EMAIL_REGEX).matcher(email).matches();
-        boolean isValidPhone = Pattern.compile(PHONE_REGEX).matcher(phone).matches();
-        boolean isValidDate = Pattern.compile(DATE_REGEX).matcher(date).matches();
-        boolean isValidUsername = false;
-        boolean isValidPassword = false;
+    public boolean isValidData(String username, String password) {
+        //boolean isValidEmail = Pattern.compile(EMAIL_REGEX).matcher(email).matches();
+        //boolean isValidPhone = Pattern.compile(PHONE_REGEX).matcher(phone).matches();
+        //boolean isValidDate = Pattern.compile(DATE_REGEX).matcher(date).matches();
 
-        if(!(username.length() < 8 || username.length() > 15)) {
-            isValidUsername = true;
-        }
+        boolean isValidUsername = username.matches("\\S{8,15}");
 
-        if(!(password.length() < 8)) {
-            isValidPassword = true;
-        }
+        boolean isValidPassword = password.matches("\\S{8,}");
 
-        return (isValidEmail && isValidPhone && isValidUsername && isValidPassword && isValidDate);
+        return (isValidUsername && isValidPassword);
     }
 
     public boolean isValidDataCustomer(String email, String phone) {

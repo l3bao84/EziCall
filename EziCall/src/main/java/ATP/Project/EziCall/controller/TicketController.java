@@ -1,6 +1,7 @@
 package ATP.Project.EziCall.controller;
 
 import ATP.Project.EziCall.exception.ObjectNotFoundException;
+import ATP.Project.EziCall.exception.TicketModificationNotAllowedException;
 import ATP.Project.EziCall.requests.AddTicketRequest;
 import ATP.Project.EziCall.requests.UpdateTicketRequest;
 import ATP.Project.EziCall.service.TicketService;
@@ -79,5 +80,10 @@ public class TicketController {
     @ExceptionHandler(ObjectNotFoundException.class)
     public ResponseEntity<Object> handleUserNotFoundException(ObjectNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(TicketModificationNotAllowedException.class)
+    public ResponseEntity<Object> handleTicketModificationNotAllowedException(TicketModificationNotAllowedException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 }

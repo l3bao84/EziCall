@@ -1,11 +1,13 @@
 package ATP.Project.EziCall.service;
 
+import ATP.Project.EziCall.exception.InvalidFormatException;
 import ATP.Project.EziCall.exception.ObjectNotFoundException;
 import ATP.Project.EziCall.models.Role;
 import ATP.Project.EziCall.models.User;
 import ATP.Project.EziCall.repository.UserRepository;
 import ATP.Project.EziCall.requests.UserRequest;
 import ATP.Project.EziCall.response.UserResponse;
+import ATP.Project.EziCall.util.DataValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,6 +28,9 @@ public class UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private DataValidation dataValidation;
 
     private final static DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
 
@@ -55,6 +60,10 @@ public class UserService {
     }
 
     public User register(UserRequest request)  {
+
+//        if(!dataValidation.isValidData(request.getUsername(), request.getPassword())) {
+//            throw new InvalidFormatException("Vui lòng nhập đúng username(8-15 ký tự và không chứa khoảng trắng) và password(ít nhất 8 ký tự và không chứa khoảng trắng)");
+//        }
 
         User user = User.builder()
                 .fullname(request.getFullname())

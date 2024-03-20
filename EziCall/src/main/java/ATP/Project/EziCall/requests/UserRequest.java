@@ -12,9 +12,11 @@ public class UserRequest {
     private String fullname;
 
     @NotBlank(message = "Không được để trống tên đăng nhập")
+    @Pattern(regexp = "\\S{8,15}", message = "Tên đăng nhập từ 8-15 ký tự và không chứa khoảng trắng")
     private String username;
 
     @NotBlank(message = "Không được để trống mật khẩu")
+    @Pattern(regexp = "\\S{8,}", message = "Mật khẩu có ít nhất 8 ký tự và không chứa khoảng trắng")
     private String password;
 
     @NotBlank(message = "Không được để trống vai trò")

@@ -2,6 +2,7 @@ package ATP.Project.EziCall.service;
 
 import ATP.Project.EziCall.DTO.DetailTicketDTO;
 import ATP.Project.EziCall.exception.ObjectNotFoundException;
+import ATP.Project.EziCall.exception.TicketModificationNotAllowedException;
 import ATP.Project.EziCall.models.*;
 import ATP.Project.EziCall.repository.CustomerRepository;
 import ATP.Project.EziCall.repository.TicketRepository;
@@ -75,6 +76,10 @@ public class TicketService {
     public DetailTicketDTO updateTicket(String id, UpdateTicketRequest updateTicketRequest) {
         Ticket ticket = ticketRepository.findById(id)
                 .orElseThrow(() -> new ObjectNotFoundException("Không tồn tại ticket có id: " + id));
+
+        if(ticket.getStatus().equals(TicketStatus.CLOSED)) {
+            throw new TicketModificationNotAllowedException("Ticket này đã đóng và bạn không thể chỉnh sửa");
+        }
 
         ticket.setTitle(updateTicketRequest.getTitle());
         ticketRepository.save(ticket);

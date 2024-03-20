@@ -2,9 +2,11 @@ package ATP.Project.EziCall.service;
 
 import ATP.Project.EziCall.DTO.NotesDTO;
 import ATP.Project.EziCall.exception.ObjectNotFoundException;
+import ATP.Project.EziCall.exception.TicketModificationNotAllowedException;
 import ATP.Project.EziCall.exception.UnauthorizedNoteCreationException;
 import ATP.Project.EziCall.models.Note;
 import ATP.Project.EziCall.models.Ticket;
+import ATP.Project.EziCall.models.TicketStatus;
 import ATP.Project.EziCall.models.User;
 import ATP.Project.EziCall.repository.NoteRepository;
 import ATP.Project.EziCall.repository.TicketRepository;
@@ -30,11 +32,10 @@ public class NoteService {
     private UserService userService;
 
     public String generateNewId(String ticketId) {
-        List<String> noteIds = noteRepository.getNoteIds();
-
         if(noteRepository.findNotesByTicket(ticketId).isEmpty()) {
             return ticketId + (String.format("%03d", 1));
         }
+        List<String> noteIds = noteRepository.getNoteIdsByTicketId(ticketId);
         long max = noteIds.stream()
                 .map(note -> note.substring(note.length() - 3))
                 .mapToLong(Long::parseLong)
@@ -61,6 +62,10 @@ public class NoteService {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new ObjectNotFoundException("Không tồn tại ticket có id: " + ticketId));
 
+        if(ticket.getStatus().equals(TicketStatus.CLOSED)) {
+            throw new TicketModificationNotAllowedException("Ticket này đã đóng và bạn không thể thêm note mới");
+        }
+
         Note note = createNewNote(ticket, request.getContent());
 
         ticket.getNotes().add(note);
@@ -72,6 +77,10 @@ public class NoteService {
 
         Note note = noteRepository.findById(noteId)
                 .orElseThrow(() -> new ObjectNotFoundException("Không tồn tại note có id: " + noteId));
+
+        if(note.getTicket().getStatus().equals(TicketStatus.CLOSED)) {
+            throw new TicketModificationNotAllowedException("Ticket này đã đóng và bạn không thể sửa note này");
+        }
 
         User user = userService.getUserByUsername();
         if(!note.getTicket().getAssignedTo().getUserId().equalsIgnoreCase(user.getUserId())) {
