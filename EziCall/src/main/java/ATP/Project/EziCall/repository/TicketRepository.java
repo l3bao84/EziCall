@@ -34,4 +34,7 @@ public interface TicketRepository extends JpaRepository<Ticket, String> {
 
     @Query("SELECT new ATP.Project.EziCall.DTO.DetailTicketDTO(t.ticketId, t.title, t.status) FROM Ticket t WHERE t.ticketId = :id")
     Optional<DetailTicketDTO> getDetailTicket(@Param("id") String id);
+
+    @Query("SELECT t.ticketId FROM Ticket t")
+    List<String> getTicketIds();
 }

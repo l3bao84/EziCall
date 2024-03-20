@@ -6,6 +6,7 @@ import ATP.Project.EziCall.exception.ObjectNotFoundException;
 import ATP.Project.EziCall.exception.TicketModificationNotAllowedException;
 import ATP.Project.EziCall.models.*;
 import ATP.Project.EziCall.repository.CustomerRepository;
+import ATP.Project.EziCall.repository.NoteRepository;
 import ATP.Project.EziCall.repository.TicketRepository;
 import ATP.Project.EziCall.requests.AddTicketRequest;
 import ATP.Project.EziCall.requests.UpdateTicketRequest;
@@ -33,10 +34,27 @@ public class TicketService {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private NoteRepository noteRepository;
+
+    public String generateNewId() {
+
+        String prefix = "TK";
+
+        List<String> ticketIds = ticketRepository.getTicketIds();
+        long max = ticketIds.stream()
+                .map(id -> id.replace(prefix, ""))
+                .mapToLong(Long::parseLong)
+                .max()
+                .orElse(0L);
+        return prefix + (String.format("%03d", max + 1));
+    }
+
     @Transactional
     public Ticket createNewTicket(Customer customer, String title, User agent) {
 
         Ticket ticket = Ticket.builder()
+                .ticketId(generateNewId())
                 .title(title)
                 .customer(customer)
                 .assignedTo(agent)
@@ -62,6 +80,7 @@ public class TicketService {
 
         Note note = noteService.createNewNote(ticket, request.getNotes());
         ticket.getNotes().add(note);
+        noteRepository.save(note);
 
         return ticketRepository.getTicketByTicketId(ticket.getTicketId());
     }

@@ -45,4 +45,14 @@ public class Note {
     public int hashCode() {
         return Objects.hash(id);
     }
+
+    @Override
+    public String toString() {
+        return "Note{" +
+                "id='" + id + '\'' +
+                ", content='" + content + '\'' +
+                ", notedAt=" + notedAt +
+                ", ticket=" + ticket +
+                '}';
+    }
 }
