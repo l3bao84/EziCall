@@ -36,6 +36,9 @@ public class CustomerService {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private NoteService noteService;
+
     public List<CustomerDTO> findCustomer(String phonenumber, String name) {
 
         return customerRepository.findCustomer(phonenumber,name);
@@ -89,7 +92,9 @@ public class CustomerService {
 
         User user = userService.getUserByUsername();
 
-        Ticket ticket = ticketService.createNewTicket(customer, customerRequest.getTitle(), customerRequest.getNote(), user);
+        Ticket ticket = ticketService.createNewTicket(customer, customerRequest.getTitle(), user);
+        Note note = noteService.createNewNote(ticket, customerRequest.getNote());
+        ticket.getNotes().add(note);
 
         customer.getTickets().add(ticket);
         return customerRepository.getCustomerById(customer.getCustomerId()).get();

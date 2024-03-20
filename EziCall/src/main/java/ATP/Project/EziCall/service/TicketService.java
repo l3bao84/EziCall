@@ -32,7 +32,7 @@ public class TicketService {
     private UserService userService;
 
     @Transactional
-    public Ticket createNewTicket(Customer customer, String title, String content, User agent) {
+    public Ticket createNewTicket(Customer customer, String title, User agent) {
 
         Ticket ticket = Ticket.builder()
                 .title(title)
@@ -42,10 +42,6 @@ public class TicketService {
                 .createdAt(LocalDateTime.now())
                 .notes(new HashSet<>())
                 .build();
-
-        Note note = noteService.createNewNote(ticket, content);
-
-        ticket.getNotes().add(note);
 
         return ticket;
     }
@@ -58,10 +54,12 @@ public class TicketService {
         Customer customer = customerRepository.findCustomerByPhoneNumber(request.getPhonenumber())
                 .orElseThrow(() -> new ObjectNotFoundException("Không tồn tại khách hàng có sđt: " + request.getPhonenumber()));
 
-        Ticket ticket = createNewTicket(customer, request.getTitle(), request.getNotes(), agent);
+        Ticket ticket = createNewTicket(customer, request.getTitle(), agent);
         ticket.setStatus(TicketStatus.valueOf(request.getStatus()));
-
         ticketRepository.save(ticket);
+
+        Note note = noteService.createNewNote(ticket, request.getNotes());
+        ticket.getNotes().add(note);
 
         return ticketRepository.getTicketByTicketId(ticket.getTicketId());
     }

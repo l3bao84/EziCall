@@ -21,4 +21,10 @@ public interface NoteRepository extends JpaRepository<Note, String> {
             "FROM Note n JOIN n.ticket t " +
             "WHERE n.id = :id")
     NotesDTO getNoteById(@Param("id") String id);
+
+    @Query("SELECT n.id FROM Note n")
+    List<String> getNoteIds();
+
+    @Query("SELECT n FROM Note n WHERE n.ticket.ticketId = :id")
+    List<Note> findNotesByTicket(@Param("id") String ticketId);
 }

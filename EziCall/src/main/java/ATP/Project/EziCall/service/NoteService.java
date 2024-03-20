@@ -30,15 +30,16 @@ public class NoteService {
     private UserService userService;
 
     public String generateNewId(String ticketId) {
+        List<String> noteIds = noteRepository.getNoteIds();
 
-        List<Note> notes = noteRepository.findAll();
-
-        long max = notes.stream()
-                .map(note -> note.getId().replace(ticketId, ""))
+        if(noteRepository.findNotesByTicket(ticketId).isEmpty()) {
+            return ticketId + (String.format("%03d", 1));
+        }
+        long max = noteIds.stream()
+                .map(note -> note.substring(note.length() - 3))
                 .mapToLong(Long::parseLong)
                 .max()
                 .orElse(0L);
-
         return ticketId + (String.format("%03d", max + 1));
     }
 
