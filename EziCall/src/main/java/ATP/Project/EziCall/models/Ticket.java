@@ -20,9 +20,11 @@ import java.util.Set;
 public class Ticket {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "ticket-generator")
+    @GenericGenerator(name = "ticket-generator", strategy = "ATP.Project.EziCall.idgenerator.TicketIdGenerator")
     @Column(name = "ticket_id")
-    private long ticketId;
+    private String ticketId;
 
     @Column(name = "title", nullable = false)
     private String title;

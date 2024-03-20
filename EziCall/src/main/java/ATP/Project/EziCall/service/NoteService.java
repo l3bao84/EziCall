@@ -29,11 +29,24 @@ public class NoteService {
     @Autowired
     private UserService userService;
 
+    public String generateNewId(String ticketId) {
+
+        List<Note> notes = noteRepository.findAll();
+
+        long max = notes.stream()
+                .map(note -> note.getId().replace(ticketId, ""))
+                .mapToLong(Long::parseLong)
+                .max()
+                .orElse(0L);
+
+        return ticketId + (String.format("%03d", max + 1));
+    }
 
     @Transactional
     public Note createNewNote(Ticket ticket, String content) {
 
         Note note = Note.builder()
+                .id(generateNewId(ticket.getTicketId()))
                 .content(content)
                 .notedAt(LocalDateTime.now())
                 .ticket(ticket)
@@ -43,7 +56,7 @@ public class NoteService {
     }
 
     @Transactional
-    public TicketResponse appendNoteToTicket(Long ticketId, AppendNoteRequest request) {
+    public TicketResponse appendNoteToTicket(String ticketId, AppendNoteRequest request) {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new ObjectNotFoundException("Không tồn tại ticket có id: " + ticketId));
 
@@ -54,7 +67,7 @@ public class NoteService {
         return ticketRepository.getTicketByTicketId(ticketId);
     }
 
-    public NotesDTO updateNote(Long noteId, AppendNoteRequest request) {
+    public NotesDTO updateNote(String noteId, AppendNoteRequest request) {
 
         Note note = noteRepository.findById(noteId)
                 .orElseThrow(() -> new ObjectNotFoundException("Không tồn tại note có id: " + noteId));
@@ -65,11 +78,12 @@ public class NoteService {
         }
 
         note.setContent(request.getContent());
+        note.setNotedAt(LocalDateTime.now());
         noteRepository.save(note);
         return noteRepository.getNoteById(note.getId());
     }
 
-    public List<NotesDTO> getNotesByTicketId(Long id) {
+    public List<NotesDTO> getNotesByTicketId(String id) {
         Ticket ticket = ticketRepository.findById(id)
                 .orElseThrow(() -> new ObjectNotFoundException("Không tồn tại ticket có id: " + id));
 

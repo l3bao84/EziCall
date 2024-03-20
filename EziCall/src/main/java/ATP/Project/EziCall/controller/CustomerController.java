@@ -5,10 +5,12 @@ import ATP.Project.EziCall.exception.InvalidFormatException;
 import ATP.Project.EziCall.exception.ObjectNotFoundException;
 import ATP.Project.EziCall.models.Customer;
 import ATP.Project.EziCall.requests.CustomerRequest;
+import ATP.Project.EziCall.requests.UpdateCustomerRequest;
 import ATP.Project.EziCall.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +25,7 @@ public class CustomerController {
     @Autowired
     private CustomerService customerService;
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/call-details")
     public ResponseEntity<?> getCallHistory() {
         if(customerService.getCallHistory().isEmpty()) {
@@ -31,15 +34,31 @@ public class CustomerController {
         return ResponseEntity.ok().body(customerService.getCallHistory());
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/call-details/{id}")
     public ResponseEntity<?> getCallHistoryDetails(@PathVariable String id) {
         return ResponseEntity.ok().body(customerService.getCallHistoryDetails(id));
     }
 
     @GetMapping("/search")
-    public ResponseEntity<?> findByPhone(@RequestParam("phone") String phone,
+    public ResponseEntity<?> findCustomer(@RequestParam("phone") String phone,
                                          @RequestParam("name") String name) {
-        return ResponseEntity.ok().body(customerService.findByPhone(phone));
+        if(customerService.findCustomer(phone,name).isEmpty()) {
+            ResponseEntity.ok().body("Không có kết quả phù hợp với tìm kiếm của bạn");
+        }
+        return ResponseEntity.ok().body(customerService.findCustomer(phone, name));
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @GetMapping("/admin/search")
+    public ResponseEntity<?> findCustomer(@RequestParam("phone") String phone,
+                                          @RequestParam("name") String name,
+                                          @RequestParam("id") String id,
+                                          @RequestParam("gender") String gender) {
+        if(customerService.findCustomer(phone,name,id,gender).isEmpty()) {
+            ResponseEntity.ok().body("Không có kết quả phù hợp với tìm kiếm của bạn");
+        }
+        return ResponseEntity.ok().body(customerService.findCustomer(phone,name,id,gender));
     }
 
     @PostMapping("")
@@ -57,7 +76,7 @@ public class CustomerController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateCustomer(@PathVariable String id,
-                                            @Valid @RequestBody CustomerRequest customerRequest,
+                                            @Valid @RequestBody UpdateCustomerRequest request,
                                             BindingResult result) {
         if(result.hasErrors()) {
             List<String> errorMessages = result.getAllErrors()
@@ -66,7 +85,7 @@ public class CustomerController {
                     .collect(Collectors.toList());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessages);
         }
-        Customer updatedCustomer = customerService.updateCustomer(id, customerRequest);
+        Customer updatedCustomer = customerService.updateCustomer(id, request);
         return ResponseEntity.ok().body("Cập nhật thông tin khách hàng thành công");
     }
 
@@ -77,6 +96,7 @@ public class CustomerController {
     }
 
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping()
     public ResponseEntity<?> getCutomers() {
         if(customerService.getCustomers().isEmpty()) {

@@ -17,9 +17,11 @@ import java.util.Objects;
 public class Note {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@GeneratedValue(generator = "note-generator")
+    //@GenericGenerator(name = "note-generator", strategy = "ATP.Project.EziCall.idgenerator.NoteIdGenerator")
     @Column(name = "note_id")
-    private long id;
+    private String id;
 
     @Column(name = "content", columnDefinition = "TEXT", nullable = false)
     private String content;

@@ -115,8 +115,8 @@ public class UserService {
         return existingUser;
     }
 
-    public List<UserResponse> findEmployee(String name, String username, String role) {
-        return userRepository.findEmployee(name, username, Role.valueOf(role));
+    public List<UserResponse> findEmployee(String name, String username, String role, String id) {
+        return userRepository.findEmployee(name, username, Role.valueOf(role), id);
     }
 
     public List<UserResponse> findEmpOnline() {

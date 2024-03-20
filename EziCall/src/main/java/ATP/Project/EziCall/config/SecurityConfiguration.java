@@ -16,7 +16,7 @@ import static ATP.Project.EziCall.models.Role.ADMIN;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity(securedEnabled = true)
+@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class SecurityConfiguration {
 
     @Autowired

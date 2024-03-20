@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface TicketRepository extends JpaRepository<Ticket, Long> {
+public interface TicketRepository extends JpaRepository<Ticket, String> {
 
     @Query("SELECT new ATP.Project.EziCall.response.TicketResponse(t.customer.phoneNumber, t.title, t.createdAt, " +
             "(SELECT n.content FROM Note n WHERE n.ticket.ticketId = t.ticketId ORDER BY n.notedAt DESC LIMIT 1),t.status) FROM Ticket t")
@@ -30,8 +30,8 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
 
     @Query("SELECT new ATP.Project.EziCall.response.TicketResponse(t.customer.phoneNumber, t.title, t.createdAt, " +
             "(SELECT n.content FROM Note n WHERE n.ticket.ticketId = t.ticketId ORDER BY n.notedAt DESC LIMIT 1),t.status) FROM Ticket t WHERE t.ticketId = :id")
-    TicketResponse getTicketByTicketId(@Param("id") Long id);
+    TicketResponse getTicketByTicketId(@Param("id") String id);
 
     @Query("SELECT new ATP.Project.EziCall.DTO.DetailTicketDTO(t.ticketId, t.title, t.status) FROM Ticket t WHERE t.ticketId = :id")
-    Optional<DetailTicketDTO> getDetailTicket(@Param("id") Long id);
+    Optional<DetailTicketDTO> getDetailTicket(@Param("id") String id);
 }

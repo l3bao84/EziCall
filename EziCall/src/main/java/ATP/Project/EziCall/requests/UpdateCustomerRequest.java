@@ -9,8 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CustomerRequest implements Validatable {
-
+public class UpdateCustomerRequest implements Validatable {
     private String fullname;
 
     private String gender;
@@ -21,9 +20,4 @@ public class CustomerRequest implements Validatable {
     private String phonenumber;
 
     private String address;
-
-    @NotBlank(message = "Không được để trống tiêu đề")
-    private String title;
-
-    private String note;
 }

@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class NotesDTO {
 
-    private long id;
+    private String id;
     private String content;
     private String agentName;
     private LocalDateTime notedAt;

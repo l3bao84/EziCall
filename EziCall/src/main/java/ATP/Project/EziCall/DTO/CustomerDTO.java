@@ -1,4 +1,4 @@
-package ATP.Project.EziCall.response;
+package ATP.Project.EziCall.DTO;
 
 import ATP.Project.EziCall.models.Gender;
 import lombok.AllArgsConstructor;
@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CustomerResponse {
+public class CustomerDTO {
     private String customerId;
 
     private String fullname;

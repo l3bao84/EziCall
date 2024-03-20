@@ -59,13 +59,14 @@ public class TicketService {
                 .orElseThrow(() -> new ObjectNotFoundException("Không tồn tại khách hàng có sđt: " + request.getPhonenumber()));
 
         Ticket ticket = createNewTicket(customer, request.getTitle(), request.getNotes(), agent);
+        ticket.setStatus(TicketStatus.valueOf(request.getStatus()));
 
         ticketRepository.save(ticket);
 
         return ticketRepository.getTicketByTicketId(ticket.getTicketId());
     }
 
-    public DetailTicketDTO getDetailTicket(Long id) {
+    public DetailTicketDTO getDetailTicket(String id) {
         DetailTicketDTO detailTicketDTO = ticketRepository.getDetailTicket(id)
                 .orElseThrow(() -> new ObjectNotFoundException("Không tồn tại ticket có id: " + id));
 
@@ -73,7 +74,7 @@ public class TicketService {
         return detailTicketDTO;
     }
 
-    public DetailTicketDTO updateTicket(Long id, UpdateTicketRequest updateTicketRequest) {
+    public DetailTicketDTO updateTicket(String id, UpdateTicketRequest updateTicketRequest) {
         Ticket ticket = ticketRepository.findById(id)
                 .orElseThrow(() -> new ObjectNotFoundException("Không tồn tại ticket có id: " + id));
 
@@ -86,7 +87,7 @@ public class TicketService {
         return detailTicketDTO;
     }
 
-    public TicketResponse closeTicket(Long ticketId) {
+    public TicketResponse closeTicket(String ticketId) {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new ObjectNotFoundException("Không tồn tại ticket có id: " + ticketId));
 

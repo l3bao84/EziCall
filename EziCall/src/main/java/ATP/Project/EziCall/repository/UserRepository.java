@@ -39,8 +39,9 @@ public interface UserRepository extends JpaRepository<User, String> {
             "FROM User u " +
             "WHERE (:name IS NULL OR :name = '' OR u.fullname LIKE %:name%) AND " +
             "(:username IS NULL OR :username = '' OR u.username LIKE %:username%) AND " +
-            "(:role IS NULL OR :role = '' OR u.role = :role)")
-    List<UserResponse> findEmployee(@Param("name") String name, @Param("username") String username,@Param("role") Role role);
+            "(:role IS NULL OR :role = '' OR u.role = :role) AND " +
+            "(:id IS NULL OR :id = '' OR u.userId LIKE %:id%)")
+    List<UserResponse> findEmployee(@Param("name") String name, @Param("username") String username,@Param("role") Role role, @Param("id") String id);
 
     @Query("SELECT new ATP.Project.EziCall.response.UserResponse(u.userId, u.fullname, u.username, u.password, u.role," +
             "(SELECT CONCAT(a.status, ' ', a.timestamp) FROM UserActivityLog a " +

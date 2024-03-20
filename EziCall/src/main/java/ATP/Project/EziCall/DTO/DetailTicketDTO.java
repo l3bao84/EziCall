@@ -10,12 +10,12 @@ import java.util.List;
 @NoArgsConstructor
 public class DetailTicketDTO {
 
-    private Long ticketId;
+    private String ticketId;
     private String title;
     private TicketStatus status;
     private List<NotesDTO> notesDTOList;
 
-    public DetailTicketDTO(Long ticketId, String title, TicketStatus status) {
+    public DetailTicketDTO(String ticketId, String title, TicketStatus status) {
         this.ticketId = ticketId;
         this.title = title;
         this.status = status;

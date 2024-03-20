@@ -2,8 +2,9 @@ package ATP.Project.EziCall.repository;
 
 import ATP.Project.EziCall.DTO.CallHistoryDTO;
 import ATP.Project.EziCall.DTO.CallHistoryDetailsDTO;
+import ATP.Project.EziCall.DTO.CustomerDTO;
 import ATP.Project.EziCall.models.Customer;
-import ATP.Project.EziCall.response.CustomerResponse;
+import ATP.Project.EziCall.models.Gender;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,21 +20,35 @@ public interface CustomerRepository extends JpaRepository<Customer, String> {
 
     Optional<Customer> findCustomerByPhoneNumber(String phonenumber);
 
-    @Query("SELECT new ATP.Project.EziCall.response.CustomerResponse(c.customerId, c.fullname, c.email, c.phoneNumber, c.address, c.gender, " +
-            "(SELECT count(t) FROM Ticket t WHERE t.customer.customerId = c.customerId GROUP BY t.customer.customerId))" +
-            "FROM Customer c WHERE c.phoneNumber = :phone")
-    Optional<CustomerResponse> findByPhone(@Param("phone") String phoneNumber);
+    @Query("SELECT new ATP.Project.EziCall.DTO.CustomerDTO(c.customerId, c.fullname, c.email, c.phoneNumber, c.address, c.gender, (" +
+            "SELECT COUNT(t.ticketId) FROM Ticket t " +
+            "WHERE t.customer.customerId = c.customerId " +
+            "GROUP BY t.customer.customerId)) " +
+            "FROM Customer c " +
+            "WHERE (:phone IS NULL OR :phone = '' OR c.phoneNumber LIKE %:phone%) AND " +
+            "(:name IS NULL OR :name = '' OR c.fullname LIKE %:name%)")
+    List<CustomerDTO> findCustomer(@Param("phone") String phoneNumber, @Param("name") String name);
 
+    @Query("SELECT new ATP.Project.EziCall.DTO.CustomerDTO(c.customerId, c.fullname, c.email, c.phoneNumber, c.address, c.gender, (" +
+            "SELECT COUNT(t.ticketId) FROM Ticket t " +
+            "WHERE t.customer.customerId = c.customerId " +
+            "GROUP BY t.customer.customerId)) " +
+            "FROM Customer c " +
+            "WHERE (:phone IS NULL OR :phone = '' OR c.phoneNumber LIKE %:phone%) AND " +
+            "(:name IS NULL OR :name = '' OR c.fullname LIKE %:name%) AND " +
+            "(:id IS NULL OR :id = '' OR c.customerId = :id) AND " +
+            "(:gender IS NULL OR :gender = '' OR c.gender = :gender)")
+    List<CustomerDTO> findCustomer(@Param("phone") String phoneNumber, @Param("name") String name, @Param("id") String id, @Param("gender") Gender gender);
 
-    @Query("SELECT new ATP.Project.EziCall.response.CustomerResponse(c.customerId, c.fullname, c.email, c.phoneNumber, c.address, c.gender, " +
+    @Query("SELECT new ATP.Project.EziCall.DTO.CustomerDTO(c.customerId, c.fullname, c.email, c.phoneNumber, c.address, c.gender, " +
             "(SELECT count(t) FROM Ticket t WHERE t.customer.customerId = c.customerId GROUP BY t.customer.customerId))" +
             "FROM Customer c")
-    List<CustomerResponse> getAll();
+    List<CustomerDTO> getAll();
 
-    @Query("SELECT new ATP.Project.EziCall.response.CustomerResponse(c.customerId, c.fullname, c.email, c.phoneNumber, c.address, c.gender, " +
+    @Query("SELECT new ATP.Project.EziCall.DTO.CustomerDTO(c.customerId, c.fullname, c.email, c.phoneNumber, c.address, c.gender, " +
             "(SELECT count(t) FROM Ticket t WHERE t.customer.customerId = c.customerId GROUP BY t.customer.customerId))" +
             "FROM Customer c WHERE c.customerId = :id")
-    Optional<CustomerResponse> getCustomerById(@Param("id") String id);
+    Optional<CustomerDTO> getCustomerById(@Param("id") String id);
 
     @Query("SELECT new ATP.Project.EziCall.DTO.CallHistoryDTO(c.customerId, c.phoneNumber, c.fullname, " +
             "(SELECT n.notedAt FROM Note n JOIN Ticket t ON n.ticket.ticketId = t.ticketId WHERE t.customer.customerId = c.customerId ORDER BY n.notedAt DESC LIMIT 1) , " +

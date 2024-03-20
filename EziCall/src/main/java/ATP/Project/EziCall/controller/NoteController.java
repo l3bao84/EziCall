@@ -22,7 +22,7 @@ public class NoteController {
     private NoteService noteService;
 
     @PostMapping("/{ticketId}")
-    public ResponseEntity<?> appendNoteToTicket(@PathVariable Long ticketId,
+    public ResponseEntity<?> appendNoteToTicket(@PathVariable String ticketId,
                                                 @Valid @RequestBody AppendNoteRequest request,
                                                 BindingResult result) {
         if(result.hasErrors()) {
@@ -36,7 +36,7 @@ public class NoteController {
     }
 
     @PutMapping("/{noteId}")
-    public ResponseEntity<?> updateNote(@PathVariable Long noteId,
+    public ResponseEntity<?> updateNote(@PathVariable String noteId,
                                                 @Valid @RequestBody AppendNoteRequest request,
                                                 BindingResult result) {
         if(result.hasErrors()) {
@@ -50,7 +50,7 @@ public class NoteController {
     }
 
     @GetMapping("/{ticketId}")
-    public ResponseEntity<?> getNotes(@PathVariable Long ticketId) {
+    public ResponseEntity<?> getNotes(@PathVariable String ticketId) {
         if(noteService.getNotesByTicketId(ticketId).isEmpty()) {
             return ResponseEntity.ok().body("Ticket này chưa có note nào");
         }

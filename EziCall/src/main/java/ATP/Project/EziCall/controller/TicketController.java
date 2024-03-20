@@ -23,12 +23,12 @@ public class TicketController {
     private TicketService ticketService;
 
     @GetMapping("/{ticketId}")
-    public ResponseEntity<?> getTicket(@PathVariable Long ticketId) {
+    public ResponseEntity<?> getTicket(@PathVariable String ticketId) {
         return ResponseEntity.ok().body(ticketService.getDetailTicket(ticketId));
     }
 
     @PutMapping("/update/{ticketId}")
-    public ResponseEntity<?> updateTicketTitle(@PathVariable Long ticketId,
+    public ResponseEntity<?> updateTicketTitle(@PathVariable String ticketId,
                                                @Valid @RequestBody UpdateTicketRequest request,
                                                BindingResult result) {
         if(result.hasErrors()) {
@@ -41,7 +41,7 @@ public class TicketController {
         return ResponseEntity.ok().body(ticketService.updateTicket(ticketId, request));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping()
     public ResponseEntity<?> getAll() {
         if(ticketService.getAll().isEmpty()) {
@@ -72,7 +72,7 @@ public class TicketController {
     }
 
     @PostMapping("/{ticketId}/close")
-    public ResponseEntity<?> closeTicket(@PathVariable Long ticketId) {
+    public ResponseEntity<?> closeTicket(@PathVariable String ticketId) {
         return ResponseEntity.ok().body(ticketService.closeTicket(ticketId));
     }
 

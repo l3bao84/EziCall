@@ -38,12 +38,13 @@ public class UserController {
 
     @GetMapping("/employee/search")
     public ResponseEntity<?> searchEmployee(@RequestParam(value = "name", required = false) String name,
+                                            @RequestParam(value = "id", required = false) String id,
                                             @RequestParam(value = "username", required = false) String username,
                                             @RequestParam(value = "role", required = false) String role) {
-        if(userService.findEmployee(name,username,role).isEmpty()) {
+        if(userService.findEmployee(name,username,role, id).isEmpty()) {
             return ResponseEntity.ok().body("Không có kết quả tìm kiếm với từ khóa của bạn");
         }
-        return ResponseEntity.ok().body(userService.findEmployee(name,username,role));
+        return ResponseEntity.ok().body(userService.findEmployee(name,username,role, id));
     }
 
     @GetMapping("/employee/filterByRole")
