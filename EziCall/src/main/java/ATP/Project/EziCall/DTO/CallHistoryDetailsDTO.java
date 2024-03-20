@@ -1,12 +1,9 @@
 package ATP.Project.EziCall.DTO;
 
 import ATP.Project.EziCall.models.Gender;
-import ATP.Project.EziCall.response.TicketResponse;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -19,7 +16,7 @@ public class CallHistoryDetailsDTO {
     private Gender gender;
     private String email;
     private String address;
-    private List<TicketResponse> ticketResponse;
+    private List<TicketOverviewDTO> ticketOverviewDTOS;
 
     public CallHistoryDetailsDTO(String customerId, String phonenumber, String fullname, Gender gender, String email, String address) {
         this.customerId = customerId;

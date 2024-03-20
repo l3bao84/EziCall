@@ -1,6 +1,7 @@
 package ATP.Project.EziCall.service;
 
 import ATP.Project.EziCall.DTO.DetailTicketDTO;
+import ATP.Project.EziCall.DTO.TicketOverviewDTO;
 import ATP.Project.EziCall.exception.ObjectNotFoundException;
 import ATP.Project.EziCall.exception.TicketModificationNotAllowedException;
 import ATP.Project.EziCall.models.*;
@@ -8,7 +9,7 @@ import ATP.Project.EziCall.repository.CustomerRepository;
 import ATP.Project.EziCall.repository.TicketRepository;
 import ATP.Project.EziCall.requests.AddTicketRequest;
 import ATP.Project.EziCall.requests.UpdateTicketRequest;
-import ATP.Project.EziCall.response.TicketResponse;
+import ATP.Project.EziCall.DTO.TicketOverviewDTO;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,7 +49,7 @@ public class TicketService {
     }
 
     @Transactional
-    public TicketResponse addTicket(AddTicketRequest request) {
+    public TicketOverviewDTO addTicket(AddTicketRequest request) {
 
         User agent = userService.getUserByUsername();
 
@@ -90,7 +91,7 @@ public class TicketService {
         return detailTicketDTO;
     }
 
-    public TicketResponse closeTicket(String ticketId) {
+    public TicketOverviewDTO closeTicket(String ticketId) {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new ObjectNotFoundException("Không tồn tại ticket có id: " + ticketId));
 
@@ -100,15 +101,15 @@ public class TicketService {
         return ticketRepository.getTicketByTicketId(ticket.getTicketId());
     }
 
-    public List<TicketResponse> getTicketsByCustomerId(String id) {
+    public List<TicketOverviewDTO> getTicketsByCustomerId(String id) {
         return ticketRepository.getTicketByCustomerId(id);
     }
 
-    public List<TicketResponse> getAll() {
+    public List<TicketOverviewDTO> getAll() {
         return ticketRepository.getAll();
     }
 
-    public List<TicketResponse> getTicketByStatus(String status) {
+    public List<TicketOverviewDTO> getTicketByStatus(String status) {
         return ticketRepository.getTicketsByStatus(TicketStatus.valueOf(status.toUpperCase()));
     }
 }

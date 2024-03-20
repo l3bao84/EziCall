@@ -1,11 +1,11 @@
 package ATP.Project.EziCall.controller;
 
+import ATP.Project.EziCall.DTO.EmployeeDTO;
 import ATP.Project.EziCall.exception.InvalidFormatException;
 import ATP.Project.EziCall.exception.RegistrationFailedException;
 import ATP.Project.EziCall.exception.ObjectNotFoundException;
 import ATP.Project.EziCall.models.User;
 import ATP.Project.EziCall.requests.UserRequest;
-import ATP.Project.EziCall.response.UserResponse;
 import ATP.Project.EziCall.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,8 +32,8 @@ public class UserController {
 
     @GetMapping("/employee/{id}")
     public ResponseEntity<?> getEmployee(@PathVariable String id) {
-        UserResponse response = userService.getEmployee(id);
-        return ResponseEntity.ok().body(response);
+        EmployeeDTO employeeDTO = userService.getEmployee(id);
+        return ResponseEntity.ok().body(employeeDTO);
     }
 
     @GetMapping("/employee/search")
@@ -49,6 +49,9 @@ public class UserController {
 
     @GetMapping("/employee/filterByRole")
     public ResponseEntity<?> filterEmployeeByRole(@RequestParam(value = "role", required = false) String role) {
+        if(userService.filterByRole(role).isEmpty()) {
+            return ResponseEntity.ok().body("Không có nhân viên nào có role: " + role);
+        }
         return ResponseEntity.ok().body(userService.filterByRole(role));
     }
 

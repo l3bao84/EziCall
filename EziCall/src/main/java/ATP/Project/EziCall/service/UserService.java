@@ -1,13 +1,11 @@
 package ATP.Project.EziCall.service;
 
-import ATP.Project.EziCall.exception.InvalidFormatException;
 import ATP.Project.EziCall.exception.ObjectNotFoundException;
 import ATP.Project.EziCall.models.Role;
 import ATP.Project.EziCall.models.User;
 import ATP.Project.EziCall.repository.UserRepository;
 import ATP.Project.EziCall.requests.UserRequest;
-import ATP.Project.EziCall.response.UserResponse;
-import ATP.Project.EziCall.util.DataValidation;
+import ATP.Project.EziCall.DTO.EmployeeDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,9 +26,6 @@ public class UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private DataValidation dataValidation;
 
     private final static DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
 
@@ -60,10 +55,6 @@ public class UserService {
     }
 
     public User register(UserRequest request)  {
-
-//        if(!dataValidation.isValidData(request.getUsername(), request.getPassword())) {
-//            throw new InvalidFormatException("Vui lòng nhập đúng username(8-15 ký tự và không chứa khoảng trắng) và password(ít nhất 8 ký tự và không chứa khoảng trắng)");
-//        }
 
         User user = User.builder()
                 .fullname(request.getFullname())
@@ -109,32 +100,32 @@ public class UserService {
         );
     }
 
-    public List<UserResponse> getAll() {
+    public List<EmployeeDTO> getAll() {
         return userRepository.getEmployees();
     }
 
-    public List<UserResponse> filterByRole(String role) {
+    public List<EmployeeDTO> filterByRole(String role) {
         return userRepository.filterUserByRole(Role.valueOf(role));
     }
 
-    public UserResponse getEmployee(String id) {
+    public EmployeeDTO getEmployee(String id) {
 
-        UserResponse existingUser = userRepository.getEmployee(id)
+        EmployeeDTO existingUser = userRepository.getEmployee(id)
                 .orElseThrow(() -> new ObjectNotFoundException("Không tồn tại nhân viên có id: " + id));
         return existingUser;
     }
 
-    public List<UserResponse> findEmployee(String name, String username, String role, String id) {
+    public List<EmployeeDTO> findEmployee(String name, String username, String role, String id) {
         return userRepository.findEmployee(name, username, Role.valueOf(role), id);
     }
 
-    public List<UserResponse> findEmpOnline() {
-        List<UserResponse> userResponses = userRepository.findEmployeeOnline();
+    public List<EmployeeDTO> findEmpOnline() {
+        List<EmployeeDTO> employeeDTOS = userRepository.findEmployeeOnline();
 
-        for(UserResponse userResponse:userResponses) {
-            userResponse.setActivityStatus(calculateOnlTime(userResponse.getActivityStatus()));
+        for(EmployeeDTO employeeDTO:employeeDTOS) {
+            employeeDTO.setActivityStatus(calculateOnlTime(employeeDTO.getActivityStatus()));
         }
-        return userResponses;
+        return employeeDTOS;
     }
 
 }

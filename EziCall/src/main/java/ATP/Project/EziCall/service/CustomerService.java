@@ -130,7 +130,7 @@ public class CustomerService {
         CallHistoryDetailsDTO callHistoryDetailsDTO = customerRepository.getCallHistoryDetails(id)
                 .orElseThrow(() -> new ObjectNotFoundException("Không tồn tại khách hàng có id: " + id));
 
-        callHistoryDetailsDTO.setTicketResponse(ticketService.getTicketsByCustomerId(id));
+        callHistoryDetailsDTO.setTicketOverviewDTOS(ticketService.getTicketsByCustomerId(id));
 
         return callHistoryDetailsDTO;
     }

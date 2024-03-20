@@ -1,6 +1,7 @@
 package ATP.Project.EziCall.service;
 
 import ATP.Project.EziCall.DTO.NotesDTO;
+import ATP.Project.EziCall.DTO.TicketOverviewDTO;
 import ATP.Project.EziCall.exception.ObjectNotFoundException;
 import ATP.Project.EziCall.exception.TicketModificationNotAllowedException;
 import ATP.Project.EziCall.exception.UnauthorizedNoteCreationException;
@@ -11,7 +12,6 @@ import ATP.Project.EziCall.models.User;
 import ATP.Project.EziCall.repository.NoteRepository;
 import ATP.Project.EziCall.repository.TicketRepository;
 import ATP.Project.EziCall.requests.AppendNoteRequest;
-import ATP.Project.EziCall.response.TicketResponse;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -58,7 +58,7 @@ public class NoteService {
     }
 
     @Transactional
-    public TicketResponse appendNoteToTicket(String ticketId, AppendNoteRequest request) {
+    public TicketOverviewDTO appendNoteToTicket(String ticketId, AppendNoteRequest request) {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new ObjectNotFoundException("Không tồn tại ticket có id: " + ticketId));
 

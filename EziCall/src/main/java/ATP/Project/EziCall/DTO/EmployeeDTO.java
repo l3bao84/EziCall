@@ -1,18 +1,14 @@
-package ATP.Project.EziCall.response;
+package ATP.Project.EziCall.DTO;
 
-import ATP.Project.EziCall.models.Gender;
 import ATP.Project.EziCall.models.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserResponse {
+public class EmployeeDTO {
 
     private String id;
 
