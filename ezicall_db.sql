@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th3 18, 2024 lúc 07:38 AM
+-- Thời gian đã tạo: Th3 20, 2024 lúc 03:41 PM
 -- Phiên bản máy phục vụ: 10.4.28-MariaDB
 -- Phiên bản PHP: 8.2.4
 
@@ -20,6 +20,10 @@ SET time_zone = "+00:00";
 --
 -- Cơ sở dữ liệu: `ezicall_db`
 --
+
+create database ezicall_db
+use ezicall_db
+
 
 -- --------------------------------------------------------
 
@@ -45,8 +49,10 @@ INSERT INTO `customers` (`customer_id`, `address`, `email`, `full_name`, `gender
 ('KH002', '456 Đường DEF, Quận 2, TP.HCM', 'tranthib@example.com', 'Trần Thị B', 'FEMALE', '0987654321'),
 ('KH003', '789 Đường GHI, Quận 3, TP.HCM', 'levanc@example.com', 'Lê Văn C', 'MALE', '0123987654'),
 ('KH004', '012 Đường JKL, Quận 4, TP.HCM', 'phamhongd@example.com', 'Phạm Hồng D', 'FEMALE', '0987123456'),
-('KH005', '345 Đường MNO, Quận 5, TP.HCM', 'hoangminhe@example.com', 'Hoàng Minh E', 'MALE', '0345678912'),
-('KH006', 'Ha Noi', 'trnlh@gmail.com', 'Tranh Luu Huong', 'MALE', '0456987321');
+('KH006', 'Ha Noi', 'trnlh@gmail.com', 'Tranh Luu Huong', 'MALE', '0456987321'),
+('KH007', 'Ha Noi', 'bao@gmail.com', 'Le Duc Bao', 'MALE', '0531456846'),
+('KH008', 'Ha Noi', 'tragiang@gmail.com', 'Nguyen Tra Giang', 'FEMALE', '0333146591'),
+('KH009', 'Ha Noi', 'tragiang1@gmail.com', 'Nguyen Tra Giang', 'FEMALE', '0333146592');
 
 -- --------------------------------------------------------
 
@@ -77,7 +83,12 @@ INSERT INTO `employee_activity_log` (`id`, `activity_type`, `timestamp`, `user_i
 (9, 'OFFLINE', '2024-03-17 15:05:30.000000', 'US003'),
 (10, 'OFFLINE', '2024-03-17 15:36:43.000000', 'US003'),
 (11, 'OFFLINE', '2024-03-17 15:40:17.000000', 'US003'),
-(12, 'OFFLINE', '2024-03-18 08:42:48.000000', 'US002');
+(12, 'OFFLINE', '2024-03-18 08:42:48.000000', 'US002'),
+(13, 'OFFLINE', '2024-03-19 17:38:33.000000', 'US002'),
+(14, 'OFFLINE', '2024-03-20 09:00:03.000000', 'US002'),
+(15, 'OFFLINE', '2024-03-20 09:32:37.000000', 'US002'),
+(16, 'OFFLINE', '2024-03-20 09:48:19.000000', 'US002'),
+(17, 'OFFLINE', '2024-03-20 15:41:38.000000', 'US003');
 
 -- --------------------------------------------------------
 
@@ -86,10 +97,10 @@ INSERT INTO `employee_activity_log` (`id`, `activity_type`, `timestamp`, `user_i
 --
 
 CREATE TABLE `notes` (
-  `note_id` bigint(20) NOT NULL,
+  `note_id` varchar(255) NOT NULL,
   `content` text NOT NULL,
   `noted_at` datetime(6) NOT NULL,
-  `ticket_id` bigint(20) NOT NULL
+  `ticket_id` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -97,9 +108,19 @@ CREATE TABLE `notes` (
 --
 
 INSERT INTO `notes` (`note_id`, `content`, `noted_at`, `ticket_id`) VALUES
-(2, 'vòi nước rỉ nước đã hai ngày', '2024-03-17 11:11:53.000000', 2),
-(3, 'bóng đèn trần phòng khách bị cháy', '2024-03-17 12:53:38.000000', 3),
-(4, 'gioăng vòi nước bị đứt nên chảy nước', '2024-03-17 14:17:59.000000', 2);
+('TK007001', 'hỏng chức năng lấy đá', '2024-03-20 11:44:17.000000', 'TK007'),
+('TK007002', 'hỏng đèn báo', '2024-03-20 11:44:41.000000', 'TK007'),
+('TK007003', 'không khử mùi', '2024-03-20 13:43:51.000000', 'TK007'),
+('TK007004', 'chập IC', '2024-03-20 14:26:53.000000', 'TK007'),
+('TK008001', 'không vào điện', '2024-03-20 14:18:37.000000', 'TK008'),
+('TK008002', 'hỏng chức năng vắt', '2024-03-20 14:19:48.000000', 'TK008'),
+('TK008003', 'chập IC', '2024-03-20 14:26:32.000000', 'TK008'),
+('TK009001', 'không nhận điều khiển', '2024-03-20 14:27:58.000000', 'TK009'),
+('TK010001', 'chập IC', '2024-03-20 16:07:31.000000', 'TK010'),
+('TK011001', 'không nhận điều khiển', '2024-03-20 16:13:31.000000', 'TK011'),
+('TK012001', 'chập IC', '2024-03-20 16:14:47.000000', 'TK012'),
+('TK013001', 'chập IC', '2024-03-20 17:19:59.000000', 'TK013'),
+('TK014001', 'không nhận điều khiển', '2024-03-20 17:20:58.000000', 'TK014');
 
 -- --------------------------------------------------------
 
@@ -108,7 +129,7 @@ INSERT INTO `notes` (`note_id`, `content`, `noted_at`, `ticket_id`) VALUES
 --
 
 CREATE TABLE `tickets` (
-  `ticket_id` bigint(20) NOT NULL,
+  `ticket_id` varchar(255) NOT NULL,
   `created_at` datetime(6) NOT NULL,
   `status` enum('OPEN','CLOSED') NOT NULL,
   `title` varchar(255) NOT NULL,
@@ -121,8 +142,19 @@ CREATE TABLE `tickets` (
 --
 
 INSERT INTO `tickets` (`ticket_id`, `created_at`, `status`, `title`, `assigned_to`, `customer_id`) VALUES
-(2, '2024-03-17 11:11:53.000000', 'CLOSED', 'Hỏng vòi nước', 'US003', 'KH006'),
-(3, '2024-03-17 12:53:38.000000', 'OPEN', 'Hỏng đèn trần', 'US003', 'KH006');
+('2', '2024-03-17 11:11:53.000000', 'CLOSED', 'Hỏng vòi nước', 'US003', 'KH006'),
+('3', '2024-03-17 12:53:38.000000', 'CLOSED', 'Hỏng đèn trần', 'US003', 'KH006'),
+('4', '2024-03-19 02:43:24.000000', 'CLOSED', 'Hỏng tivi', 'US001', 'KH006'),
+('5', '2024-03-19 15:25:04.000000', 'CLOSED', 'Hỏng máy tính', 'US001', 'KH006'),
+('6', '2024-03-20 01:42:15.000000', 'CLOSED', 'Sơn tường', 'US001', 'KH006'),
+('TK007', '2024-03-20 10:54:31.000000', 'CLOSED', 'Tủ lạnh', 'US001', 'KH006'),
+('TK008', '2024-03-20 14:18:37.000000', 'OPEN', 'Máy giặt', 'US001', 'KH006'),
+('TK009', '2024-03-20 14:27:58.000000', 'OPEN', 'Điều hòa', 'US001', 'KH006'),
+('TK010', '2024-03-20 16:07:31.000000', 'OPEN', 'Máy rửa bát', 'US001', 'KH007'),
+('TK011', '2024-03-20 16:13:31.000000', 'OPEN', 'Quạt trần', 'US001', 'KH007'),
+('TK012', '2024-03-20 16:14:47.000000', 'OPEN', 'Lò vi sóng', 'US001', 'KH008'),
+('TK013', '2024-03-20 17:19:59.000000', 'OPEN', 'Lò vi sóng', 'US001', 'KH009'),
+('TK014', '2024-03-20 17:20:58.000000', 'OPEN', 'Quạt trần', 'US001', 'KH007');
 
 -- --------------------------------------------------------
 
@@ -145,8 +177,7 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`user_id`, `full_name`, `password`, `role`, `username`) VALUES
 ('US001', 'jack', '$2a$10$3OPX27.m1IHdRhWP6NILzuZmXlVgHqQ39YH0i3u4ttI.ttGqGmlSq', 'ADMIN', 'jackkosai'),
 ('US002', 'le duc bao', '$2a$10$a54D/sDbp0Ygo8fNXlfoTuuOSueQ03530nFZzAxq/W7W5kjamP7ci', 'MARKETING', 'ducbaodepzaivl'),
-('US003', 'tranh luu huong', '$2a$10$9WJMCcb3VL8uRqFfB9PMguV4b22ly/wPE1fLe2BDfMxY/V/7XUb.6', 'SUPPORTER', 'trluuhuong'),
-('US004', 'tranh luu huong', '$2a$10$xHX.6zYgBpIG59ukGpONAe0e2eHwGi2Nw1NFulRHL.VGmzMnUVHxu', 'MARKETING', 'trluuhuong');
+('US003', 'tranh luu huong', '$2a$10$9oR2/xo4BT6D0m2rvD02zeIshzJN5gjMtRE9E6oIHQ8Nv8LXKl7LS', 'MARKETING', 'trnluuhuong');
 
 --
 -- Chỉ mục cho các bảng đã đổ
@@ -195,19 +226,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT cho bảng `employee_activity_log`
 --
 ALTER TABLE `employee_activity_log`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
-
---
--- AUTO_INCREMENT cho bảng `notes`
---
-ALTER TABLE `notes`
-  MODIFY `note_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
-
---
--- AUTO_INCREMENT cho bảng `tickets`
---
-ALTER TABLE `tickets`
-  MODIFY `ticket_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- Các ràng buộc cho các bảng đã đổ
