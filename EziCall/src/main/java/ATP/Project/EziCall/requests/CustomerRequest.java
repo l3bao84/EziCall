@@ -2,6 +2,7 @@ package ATP.Project.EziCall.requests;
 
 import ATP.Project.EziCall.util.Validatable;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,6 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CustomerRequest implements Validatable {
 
+    @Pattern(regexp = "^[\\p{Lu}\\p{Ll}][\\p{Ll}]*\\s[\\p{Lu}\\p{Ll}][\\p{Ll}]*\\s[\\p{Lu}\\p{Ll}][\\p{Ll}]*$", message = "Tên phải gồm đúng 3 từ, mỗi từ bắt đầu bằng chữ cái viết hoa")
     private String fullname;
 
     private String gender;
