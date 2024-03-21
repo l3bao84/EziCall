@@ -116,7 +116,15 @@ public class UserService {
     }
 
     public List<EmployeeDTO> findEmployee(String name, String username, String role, String id) {
-        return userRepository.findEmployee(name, username, Role.valueOf(role), id);
+        Role rol = null;
+        if (role != null && !role.isEmpty()) {
+            try {
+                rol = Role.valueOf(role);
+            } catch (IllegalArgumentException e) {
+
+            }
+        }
+        return userRepository.findEmployee(name, username, rol, id);
     }
 
     public List<EmployeeDTO> findEmpOnline() {
