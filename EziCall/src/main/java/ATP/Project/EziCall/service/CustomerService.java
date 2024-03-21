@@ -45,8 +45,15 @@ public class CustomerService {
     }
 
     public List<CustomerDTO> findCustomer(String phonenumber, String name, String id, String gender) {
+        Gender gendr = null;
+        if (gender != null && !gender.isEmpty()) {
+            try {
+                gendr = Gender.valueOf(gender);
+            } catch (IllegalArgumentException e) {
 
-        return customerRepository.findCustomer(phonenumber,name, id, Gender.valueOf(gender));
+            }
+        }
+        return customerRepository.findCustomer(phonenumber,name, id, gendr);
     }
 
     public List<CustomerDTO> getCustomers() {

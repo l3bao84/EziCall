@@ -36,7 +36,7 @@ public interface CustomerRepository extends JpaRepository<Customer, String> {
             "FROM Customer c " +
             "WHERE (:phone IS NULL OR :phone = '' OR c.phoneNumber LIKE %:phone%) AND " +
             "(:name IS NULL OR :name = '' OR c.fullname LIKE %:name%) AND " +
-            "(:id IS NULL OR :id = '' OR c.customerId = :id) AND " +
+            "(:id IS NULL OR :id = '' OR c.customerId LIKE %:id%) AND " +
             "(:gender IS NULL OR :gender = '' OR c.gender = :gender)")
     List<CustomerDTO> findCustomer(@Param("phone") String phoneNumber, @Param("name") String name, @Param("id") String id, @Param("gender") Gender gender);
 
