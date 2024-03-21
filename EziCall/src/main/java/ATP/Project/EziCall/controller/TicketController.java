@@ -39,14 +39,15 @@ public class TicketController {
                     .collect(Collectors.toList());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessages);
         }
-        return ResponseEntity.ok().body(ticketService.updateTicket(ticketId, request));
+        ticketService.updateTicket(ticketId, request);
+        return ResponseEntity.ok().body("Lưu thành công");
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping()
     public ResponseEntity<?> getAll() {
         if(ticketService.getAll().isEmpty()) {
-            return ResponseEntity.ok().body("Không có ticket nào trong hệ thống");
+            return ResponseEntity.ok().body("Không thấy danh sách ticket");
         }
         return ResponseEntity.ok().body(ticketService.getAll());
     }
@@ -54,7 +55,7 @@ public class TicketController {
     @GetMapping("/status/{status}")
     public ResponseEntity<?> getTicketByStatus(@PathVariable String status) {
         if(ticketService.getTicketByStatus(status).isEmpty()) {
-            return ResponseEntity.ok().body("Không có ticket nào trong hệ thống có trạng thái: " + status.toUpperCase());
+            return ResponseEntity.ok().body("Không thấy danh sách ticket");
         }
         return ResponseEntity.ok().body(ticketService.getTicketByStatus(status));
     }
@@ -69,12 +70,18 @@ public class TicketController {
                     .collect(Collectors.toList());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessages);
         }
-        return ResponseEntity.ok().body(ticketService.addTicket(request));
+        ticketService.addTicket(request);
+        return ResponseEntity.ok().body("Lưu thành công");
     }
 
     @PostMapping("/{ticketId}/close")
     public ResponseEntity<?> closeTicket(@PathVariable String ticketId) {
         return ResponseEntity.ok().body(ticketService.closeTicket(ticketId));
+    }
+
+    @PostMapping("/{ticketId}/open")
+    public ResponseEntity<?> openTicket(@PathVariable String ticketId) {
+        return ResponseEntity.ok().body(ticketService.openTicket(ticketId));
     }
 
     @ExceptionHandler(ObjectNotFoundException.class)

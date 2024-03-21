@@ -33,7 +33,8 @@ public class NoteController {
                     .collect(Collectors.toList());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessages);
         }
-        return ResponseEntity.ok().body(noteService.appendNoteToTicket(ticketId, request));
+        noteService.appendNoteToTicket(ticketId, request);
+        return ResponseEntity.ok().body("Lưu thành công");
     }
 
     @PutMapping("/{noteId}")
@@ -47,7 +48,8 @@ public class NoteController {
                     .collect(Collectors.toList());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessages);
         }
-        return ResponseEntity.ok().body(noteService.updateNote(noteId,request));
+        noteService.updateNote(noteId,request);
+        return ResponseEntity.ok().body("Lưu thành công");
     }
 
     @GetMapping("/{ticketId}")

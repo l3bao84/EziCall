@@ -10,9 +10,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AuthenticationRequest {
 
-    @NotBlank(message = "Không được để trống trường này")
+    @NotBlank(message = "Tên đăng nhập không được để trống")
     private String username;
 
-    @NotBlank(message = "Không được để trống trường này")
+    @NotBlank(message = "Mật khẩu không đuợc để trống")
     private String password;
 }

@@ -1,9 +1,7 @@
 package ATP.Project.EziCall.controller;
 
-import ATP.Project.EziCall.DTO.EmployeeDTO;
-import ATP.Project.EziCall.exception.InvalidFormatException;
-import ATP.Project.EziCall.exception.RegistrationFailedException;
-import ATP.Project.EziCall.exception.ObjectNotFoundException;
+import ATP.Project.EziCall.DTO.EmployeeDetailDTO;
+import ATP.Project.EziCall.exception.*;
 import ATP.Project.EziCall.models.User;
 import ATP.Project.EziCall.requests.UserRequest;
 import ATP.Project.EziCall.service.UserService;
@@ -14,6 +12,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/users")
@@ -25,15 +25,15 @@ public class UserController {
     @GetMapping("/employees")
     public ResponseEntity<?> getAll() {
         if(userService.getAll().isEmpty()) {
-            return ResponseEntity.ok().body("Không có nhân viên nào trong hệ thống");
+            return ResponseEntity.ok().body("Không thấy danh sách nhân viên");
         }
         return ResponseEntity.ok().body(userService.getAll());
     }
 
     @GetMapping("/employee/{id}")
     public ResponseEntity<?> getEmployee(@PathVariable String id) {
-        EmployeeDTO employeeDTO = userService.getEmployee(id);
-        return ResponseEntity.ok().body(employeeDTO);
+        EmployeeDetailDTO employeeDetailDTO = userService.getEmployee(id);
+        return ResponseEntity.ok().body(employeeDetailDTO);
     }
 
     @GetMapping("/employee/search")
@@ -42,7 +42,7 @@ public class UserController {
                                             @RequestParam(value = "username", required = false) String username,
                                             @RequestParam(value = "role", required = false) String role) {
         if(userService.findEmployee(name,username,role, id).isEmpty()) {
-            return ResponseEntity.ok().body("Không có kết quả tìm kiếm với từ khóa của bạn");
+            return ResponseEntity.ok().body("Không tìm thấy nhân viên phù hợp");
         }
         return ResponseEntity.ok().body(userService.findEmployee(name,username,role, id));
     }
@@ -50,17 +50,17 @@ public class UserController {
     @GetMapping("/employee/filterByRole")
     public ResponseEntity<?> filterEmployeeByRole(@RequestParam(value = "role", required = false) String role) {
         if(userService.filterByRole(role).isEmpty()) {
-            return ResponseEntity.ok().body("Không có nhân viên nào có role: " + role);
+            return ResponseEntity.ok().body("Không có nhân viên nào phù hợp");
         }
         return ResponseEntity.ok().body(userService.filterByRole(role));
     }
 
-    @GetMapping("/employee/online")
-    public ResponseEntity<?> getOnlineEmployees() {
-        if(userService.findEmpOnline().isEmpty()) {
-            return ResponseEntity.ok().body("Không có nhân viên nào trong hệ thống đang online");
+    @GetMapping("/employee/activities")
+    public ResponseEntity<?> getEmployeeActivities(@RequestParam(value = "status", required = false) String status) {
+        if((!status.equals("")) && (userService.getEmployeesActivities(status).isEmpty())) {
+            return ResponseEntity.ok().body("Không có nhân viên " + status);
         }
-        return ResponseEntity.ok().body(userService.findEmpOnline());
+        return ResponseEntity.ok().body(userService.getEmployeesActivities(status));
     }
 
     @PutMapping("/employee/{id}")
@@ -68,16 +68,20 @@ public class UserController {
                                             @Valid @RequestBody UserRequest request,
                                             BindingResult result) {
         if(result.hasErrors()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getAllErrors());
+            List<String> errorMessages = result.getAllErrors()
+                    .stream()
+                    .map(error -> error.getDefaultMessage())
+                    .collect(Collectors.toList());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessages);
         }
         User updatedUser = userService.updateEmployee(id, request);
-        return ResponseEntity.ok().body("Cập nhật thông tin nhân viên thành công");
+        return ResponseEntity.ok().body("Lưu thành công");
     }
 
     @DeleteMapping("/employee/{id}")
     public ResponseEntity<?> deleteEmployee(@PathVariable String id) {
         userService.deleteEmployee(id);
-        return ResponseEntity.ok().body("Xóa thành công nhân viên có id: " + id);
+        return ResponseEntity.ok().body("Xóa thành công nhân viên");
     }
 
     @ExceptionHandler(RegistrationFailedException.class)
@@ -95,4 +99,13 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 
+    @ExceptionHandler(UsernameAlreadyExistException.class)
+    public ResponseEntity<Object> handleUsernameAlreadyExistException(UsernameAlreadyExistException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(EmptyListException.class)
+    public ResponseEntity<Object> handleEmptyListException(EmptyListException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
 }

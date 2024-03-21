@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UpdateTicketRequest {
 
-    @NotBlank(message = "Không được để trống tiêu đề")
+    @NotBlank(message = "Tiêu đề không được để trống")
     private String title;
 }

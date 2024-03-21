@@ -61,7 +61,7 @@ public class AuthenticationService {
 
             return token;
         } catch (AuthenticationException e) {
-            throw new AuthenticationFailedException("Authentication failed", e);
+            throw new AuthenticationFailedException("Tên đăng nhập hoặc mật khẩu không hợp lệ", e);
         }
     }
 

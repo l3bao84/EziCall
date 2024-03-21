@@ -1,11 +1,15 @@
 package ATP.Project.EziCall.service;
 
+import ATP.Project.EziCall.DTO.EmployeeActivityDTO;
+import ATP.Project.EziCall.DTO.EmployeeDTO;
+import ATP.Project.EziCall.exception.EmptyListException;
 import ATP.Project.EziCall.exception.ObjectNotFoundException;
+import ATP.Project.EziCall.exception.UsernameAlreadyExistException;
 import ATP.Project.EziCall.models.Role;
 import ATP.Project.EziCall.models.User;
 import ATP.Project.EziCall.repository.UserRepository;
 import ATP.Project.EziCall.requests.UserRequest;
-import ATP.Project.EziCall.DTO.EmployeeDTO;
+import ATP.Project.EziCall.DTO.EmployeeDetailDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -50,11 +54,11 @@ public class UserService {
         return userRepository.findByUsername(getAuthenticatedUsername()).get();
     }
 
-    public void saveUser(User user) {
-        userRepository.save(user);
-    }
-
     public User register(UserRequest request)  {
+
+        if(userRepository.findByUsername(request.getUsername()).isPresent()) {
+            throw new UsernameAlreadyExistException("Username đã có trong hệ thống");
+        }
 
         User user = User.builder()
                 .fullname(request.getFullname())
@@ -71,6 +75,9 @@ public class UserService {
         User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new ObjectNotFoundException("Không tồn tại nhân viên có id: " + id));
 
+        if(userRepository.findByUsername(request.getUsername()).isPresent()) {
+            throw new UsernameAlreadyExistException("Username đã có trong hệ thống");
+        }
 
         existingUser.setUsername(request.getUsername());
         existingUser.setPassword(passwordEncoder.encode(request.getPassword()));
@@ -86,19 +93,7 @@ public class UserService {
         userRepository.delete(existingUser);
     }
 
-    public String calculateOnlTime(String timestamp) {
-        int spaceIndex = timestamp.indexOf(" ");
-        String timestampString = timestamp.substring(spaceIndex + 1);
 
-        LocalDateTime startTime = LocalDateTime.parse(timestampString, DATE_TIME_FORMATTER);
-        Duration duration = Duration.between(startTime, LocalDateTime.now());
-
-        return timestamp.replace(timestampString,
-                "for " + duration.getSeconds()/3600 + ":" +
-                        (duration.getSeconds() % 3600) / 60 + ":" +
-                        duration.getSeconds() % 60
-        );
-    }
 
     public List<EmployeeDTO> getAll() {
         return userRepository.getEmployees();
@@ -108,9 +103,9 @@ public class UserService {
         return userRepository.filterUserByRole(Role.valueOf(role));
     }
 
-    public EmployeeDTO getEmployee(String id) {
+    public EmployeeDetailDTO getEmployee(String id) {
 
-        EmployeeDTO existingUser = userRepository.getEmployee(id)
+        EmployeeDetailDTO existingUser = userRepository.getEmployee(id)
                 .orElseThrow(() -> new ObjectNotFoundException("Không tồn tại nhân viên có id: " + id));
         return existingUser;
     }
@@ -127,13 +122,46 @@ public class UserService {
         return userRepository.findEmployee(name, username, rol, id);
     }
 
-    public List<EmployeeDTO> findEmpOnline() {
-        List<EmployeeDTO> employeeDTOS = userRepository.findEmployeeOnline();
+    private StringBuilder calculateActivityTime(String acStatus, String timestamp) {
 
-        for(EmployeeDTO employeeDTO:employeeDTOS) {
-            employeeDTO.setActivityStatus(calculateOnlTime(employeeDTO.getActivityStatus()));
+        LocalDateTime startTime = LocalDateTime.parse(timestamp, DATE_TIME_FORMATTER);
+        Duration duration = Duration.between(startTime, LocalDateTime.now());
+
+        StringBuilder activityTime = new StringBuilder();
+        long day = duration.toDays();
+        if(day != 0 && acStatus.equalsIgnoreCase("OFFLINE")) {
+            activityTime.append(day + " ngày " + duration.toHours() % 24 + " giờ " + duration.toMinutes() % 60 + " phút trước");
         }
-        return employeeDTOS;
+
+        activityTime.append(duration.toHours() % 24 + " giờ " + duration.toMinutes() % 60 + " phút");
+
+        return activityTime;
+    }
+
+    public List<EmployeeActivityDTO> getEmployeesActivities(String status) {
+        if(userRepository.findAll().isEmpty()) {
+            throw new EmptyListException("Không có nhân viên");
+        }
+
+        List<EmployeeActivityDTO> employeeActivityDTOS = userRepository.getEmployeesActivities(status);
+
+        for (EmployeeActivityDTO employeeActivityDTO:employeeActivityDTOS) {
+            if(employeeActivityDTO.getActivityStatus() != null) {
+                int spaceIndex = employeeActivityDTO.getActivityStatus().indexOf(" ");
+
+                String timestampString = employeeActivityDTO.getActivityStatus().substring(spaceIndex + 1);
+                String acStatus = employeeActivityDTO.getActivityStatus().substring(0, spaceIndex).trim();
+
+                employeeActivityDTO.setActivityStatus(acStatus);
+                employeeActivityDTO.setActivityTime(
+                        calculateActivityTime(
+                                acStatus, timestampString
+                        ).toString()
+                );
+            }
+        }
+
+        return employeeActivityDTOS;
     }
 
 }

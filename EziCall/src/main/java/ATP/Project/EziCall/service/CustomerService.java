@@ -3,10 +3,8 @@ package ATP.Project.EziCall.service;
 import ATP.Project.EziCall.DTO.CallHistoryDTO;
 import ATP.Project.EziCall.DTO.CallHistoryDetailsDTO;
 import ATP.Project.EziCall.DTO.CustomerDTO;
-import ATP.Project.EziCall.exception.FieldAlreadyExistException;
-import ATP.Project.EziCall.exception.InvalidFormatException;
-import ATP.Project.EziCall.exception.RegistrationFailedException;
-import ATP.Project.EziCall.exception.ObjectNotFoundException;
+import ATP.Project.EziCall.DTO.CustomerDetailDTO;
+import ATP.Project.EziCall.exception.*;
 import ATP.Project.EziCall.models.*;
 import ATP.Project.EziCall.repository.CustomerRepository;
 import ATP.Project.EziCall.requests.CustomerRequest;
@@ -17,7 +15,6 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.validation.Valid;
 import java.util.HashSet;
 import java.util.List;
 
@@ -57,11 +54,21 @@ public class CustomerService {
     }
 
     public List<CustomerDTO> getCustomers() {
+        if(customerRepository.findAll().isEmpty()) {
+            throw new EmptyListException("Không thấy danh sách khách hàng");
+        }
+        List<CustomerDTO> customerDTOS = customerRepository.getAll();
+        for (CustomerDTO customerDTO:customerDTOS) {
+            if(customerDTO.getNumberCall() == null) {
+                customerDTO.setNumberCall(0L);
+            }
+        }
+
         return customerRepository.getAll();
     }
 
-    public CustomerDTO getCustomerById(String id) {
-        CustomerDTO customer = customerRepository.getCustomerById(id)
+    public CustomerDetailDTO getCustomerById(String id) {
+        CustomerDetailDTO customer = customerRepository.getCustomerById(id)
                 .orElseThrow(() -> new ObjectNotFoundException("Không tồn tại khách hàng có id: " + id));
 
         return customer;
@@ -69,22 +76,17 @@ public class CustomerService {
 
     private void validateCustomerData(Validatable data) throws InvalidFormatException, RegistrationFailedException {
         if (!dataValidation.isValidDataCustomer(data.getEmail(), data.getPhonenumber())) {
-            throw new InvalidFormatException("Vui lòng nhập đúng định dạng");
+            throw new InvalidFormatException("Email không hợp lệ");
         }
-
-        customerRepository.findByEmail(data.getEmail())
-                .ifPresent(s -> {
-                    throw new FieldAlreadyExistException("Email này đã được sử dụng");
-                });
 
         customerRepository.findCustomerByPhoneNumber(data.getPhonenumber())
                 .ifPresent(s -> {
-                    throw new FieldAlreadyExistException("Số điện thoại này đã được sử dụng");
+                    throw new FieldAlreadyExistException("SĐT đã có trong hệ thống");
                 });
     }
 
     @Transactional
-    public CustomerDTO insertNewCustomerAndTicket(CustomerRequest customerRequest) {
+    public CustomerDetailDTO insertNewCustomerAndTicket(CustomerRequest customerRequest, String value) {
         validateCustomerData(customerRequest);
 
         Customer customer = Customer.builder()
@@ -97,13 +99,19 @@ public class CustomerService {
 
         customerRepository.save(customer);
 
-        User user = userService.getUserByUsername();
+        if(value.equalsIgnoreCase("true")) {
+            if(customerRequest.getTitle().equals("")) {
+                throw new InvalidFormatException("Tiêu đề không được để trống");
+            }else {
+                User user = userService.getUserByUsername();
 
-        Ticket ticket = ticketService.createNewTicket(customer, customerRequest.getTitle(), user);
-        Note note = noteService.createNewNote(ticket, customerRequest.getNote());
-        ticket.getNotes().add(note);
+                Ticket ticket = ticketService.createNewTicket(customer, customerRequest.getTitle(), user);
+                Note note = noteService.createNewNote(ticket, customerRequest.getNote());
+                ticket.getNotes().add(note);
 
-        customer.getTickets().add(ticket);
+                customer.getTickets().add(ticket);
+            }
+        }
         return customerRepository.getCustomerById(customer.getCustomerId()).get();
     }
 
@@ -136,6 +144,10 @@ public class CustomerService {
     public CallHistoryDetailsDTO getCallHistoryDetails(String id) {
         CallHistoryDetailsDTO callHistoryDetailsDTO = customerRepository.getCallHistoryDetails(id)
                 .orElseThrow(() -> new ObjectNotFoundException("Không tồn tại khách hàng có id: " + id));
+
+        if(ticketService.getTicketsByCustomerId(id).isEmpty()) {
+            throw new EmptyListException("Không có danh sách ticket");
+        }
 
         callHistoryDetailsDTO.setTicketOverviewDTOS(ticketService.getTicketsByCustomerId(id));
 

@@ -14,5 +14,5 @@ public class NotesDTO {
     private String id;
     private String content;
     private String agentName;
-    private LocalDateTime notedAt;
+    private String notedAt;
 }

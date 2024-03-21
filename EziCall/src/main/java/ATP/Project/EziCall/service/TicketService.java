@@ -1,6 +1,7 @@
 package ATP.Project.EziCall.service;
 
 import ATP.Project.EziCall.DTO.DetailTicketDTO;
+import ATP.Project.EziCall.DTO.NotesDTO;
 import ATP.Project.EziCall.DTO.TicketOverviewDTO;
 import ATP.Project.EziCall.exception.ObjectNotFoundException;
 import ATP.Project.EziCall.exception.TicketModificationNotAllowedException;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.List;
 
@@ -36,6 +38,8 @@ public class TicketService {
 
     @Autowired
     private NoteRepository noteRepository;
+
+    private final static DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy");
 
     public String generateNewId() {
 
@@ -89,7 +93,16 @@ public class TicketService {
         DetailTicketDTO detailTicketDTO = ticketRepository.getDetailTicket(id)
                 .orElseThrow(() -> new ObjectNotFoundException("Không tồn tại ticket có id: " + id));
 
-        detailTicketDTO.setNotesDTOList(noteService.getNotesByTicketId(id));
+        List<NotesDTO> notesDTOList = noteService.getNotesByTicketId(id);
+        for(NotesDTO notesDTO:notesDTOList) {
+
+            DateTimeFormatter originalFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
+            LocalDateTime dateTime = LocalDateTime.parse(notesDTO.getNotedAt(), originalFormatter);
+
+            notesDTO.setNotedAt(dateTime.format(DATE_TIME_FORMATTER));
+        }
+
+        detailTicketDTO.setNotesDTOList(notesDTOList);
         return detailTicketDTO;
     }
 
@@ -120,15 +133,56 @@ public class TicketService {
         return ticketRepository.getTicketByTicketId(ticket.getTicketId());
     }
 
+    public TicketOverviewDTO openTicket(String ticketId) {
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new ObjectNotFoundException("Không tồn tại ticket có id: " + ticketId));
+
+        ticket.setStatus(TicketStatus.OPEN);
+
+        ticketRepository.save(ticket);
+        return ticketRepository.getTicketByTicketId(ticket.getTicketId());
+    }
+
     public List<TicketOverviewDTO> getTicketsByCustomerId(String id) {
-        return ticketRepository.getTicketByCustomerId(id);
+        List<TicketOverviewDTO> ticketOverviewDTOS = ticketRepository.getTicketByCustomerId(id);
+
+        for(TicketOverviewDTO ticketOverviewDTO:ticketOverviewDTOS) {
+
+            DateTimeFormatter originalFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
+            LocalDateTime dateTime = LocalDateTime.parse(ticketOverviewDTO.getCreatedAt(), originalFormatter);
+
+            ticketOverviewDTO.setCreatedAt(dateTime.format(DATE_TIME_FORMATTER));
+        }
+
+        return ticketOverviewDTOS;
     }
 
     public List<TicketOverviewDTO> getAll() {
-        return ticketRepository.getAll();
+
+        List<TicketOverviewDTO> ticketOverviewDTOS = ticketRepository.getAll();
+
+        for(TicketOverviewDTO ticketOverviewDTO:ticketOverviewDTOS) {
+
+            DateTimeFormatter originalFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
+            LocalDateTime dateTime = LocalDateTime.parse(ticketOverviewDTO.getCreatedAt(), originalFormatter);
+
+            ticketOverviewDTO.setCreatedAt(dateTime.format(DATE_TIME_FORMATTER));
+        }
+
+        return ticketOverviewDTOS;
     }
 
     public List<TicketOverviewDTO> getTicketByStatus(String status) {
-        return ticketRepository.getTicketsByStatus(TicketStatus.valueOf(status.toUpperCase()));
+        List<TicketOverviewDTO> ticketOverviewDTOS = ticketRepository.getTicketsByStatus(TicketStatus.valueOf(status.toUpperCase()));
+
+        for(TicketOverviewDTO ticketOverviewDTO:ticketOverviewDTOS) {
+
+            DateTimeFormatter originalFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
+            LocalDateTime dateTime = LocalDateTime.parse(ticketOverviewDTO.getCreatedAt(), originalFormatter);
+
+            ticketOverviewDTO.setCreatedAt(dateTime.format(DATE_TIME_FORMATTER));
+        }
+
+        return ticketOverviewDTOS;
     }
 }

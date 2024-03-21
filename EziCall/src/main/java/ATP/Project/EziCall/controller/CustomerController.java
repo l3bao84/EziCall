@@ -1,5 +1,6 @@
 package ATP.Project.EziCall.controller;
 
+import ATP.Project.EziCall.exception.EmptyListException;
 import ATP.Project.EziCall.exception.FieldAlreadyExistException;
 import ATP.Project.EziCall.exception.InvalidFormatException;
 import ATP.Project.EziCall.exception.ObjectNotFoundException;
@@ -29,7 +30,7 @@ public class CustomerController {
     @GetMapping("/call-details")
     public ResponseEntity<?> getCallHistory() {
         if(customerService.getCallHistory().isEmpty()) {
-            return ResponseEntity.ok().body("Không có danh sách cuộc gọi nào");
+            return ResponseEntity.ok().body("Không thấy danh sách lịch sử cuộc gọi");
         }
         return ResponseEntity.ok().body(customerService.getCallHistory());
     }
@@ -44,7 +45,8 @@ public class CustomerController {
     public ResponseEntity<?> findCustomer(@RequestParam("phone") String phone,
                                          @RequestParam("name") String name) {
         if(customerService.findCustomer(phone,name).isEmpty()) {
-            ResponseEntity.ok().body("Không có kết quả phù hợp với tìm kiếm của bạn");
+            System.out.println(customerService.findCustomer(phone,name).size());
+            return ResponseEntity.ok().body("Không tìm thấy khách hàng phù hợp");
         }
         return ResponseEntity.ok().body(customerService.findCustomer(phone, name));
     }
@@ -56,13 +58,14 @@ public class CustomerController {
                                           @RequestParam("id") String id,
                                           @RequestParam("gender") String gender) {
         if(customerService.findCustomer(phone,name,id,gender).isEmpty()) {
-            ResponseEntity.ok().body("Không có kết quả phù hợp với tìm kiếm của bạn");
+            return ResponseEntity.ok().body("Không tìm thấy khách hàng phù hợp");
         }
         return ResponseEntity.ok().body(customerService.findCustomer(phone,name,id,gender));
     }
 
     @PostMapping("")
-    public ResponseEntity<?> addCustomer(@Valid @RequestBody CustomerRequest customerRequest,
+    public ResponseEntity<?> addCustomer(@RequestParam("addTicket") String value,
+                                         @Valid @RequestBody CustomerRequest customerRequest,
                                          BindingResult result) {
         if(result.hasErrors()) {
             List<String> errorMessages = result.getAllErrors()
@@ -71,7 +74,8 @@ public class CustomerController {
                     .collect(Collectors.toList());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessages);
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(customerService.insertNewCustomerAndTicket(customerRequest));
+        customerService.insertNewCustomerAndTicket(customerRequest, value);
+        return ResponseEntity.status(HttpStatus.CREATED).body("Thêm khách hàng thành công");
     }
 
     @PutMapping("/{id}")
@@ -92,7 +96,7 @@ public class CustomerController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> removeCustomer(@PathVariable String id) {
         customerService.removeCustomer(id);
-        return ResponseEntity.ok().body("Xóa thành công khách hàng có id: " + id);
+        return ResponseEntity.ok().body("Xóa khách hàng thành công");
     }
 
 
@@ -123,5 +127,10 @@ public class CustomerController {
     @ExceptionHandler(FieldAlreadyExistException.class)
     public ResponseEntity<Object> handleFieldAlreadyExistException(FieldAlreadyExistException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(EmptyListException.class)
+    public ResponseEntity<Object> handleEmptyListException(EmptyListException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 }

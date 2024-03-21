@@ -14,7 +14,7 @@ public class TicketOverviewDTO {
 
     private String phonenumber;
     private String title;
-    private LocalDateTime createdAt;
+    private String createdAt;
     private String latestNote;
     private TicketStatus status;
 }

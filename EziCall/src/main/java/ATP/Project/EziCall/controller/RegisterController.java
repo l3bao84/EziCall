@@ -2,6 +2,7 @@ package ATP.Project.EziCall.controller;
 
 import ATP.Project.EziCall.exception.InvalidFormatException;
 import ATP.Project.EziCall.exception.RegistrationFailedException;
+import ATP.Project.EziCall.exception.UsernameAlreadyExistException;
 import ATP.Project.EziCall.models.Role;
 import ATP.Project.EziCall.requests.UserRequest;
 import ATP.Project.EziCall.service.UserService;
@@ -44,6 +45,11 @@ public class RegisterController {
 
     @ExceptionHandler(InvalidFormatException.class)
     public ResponseEntity<Object> handleInvalidFormatException(InvalidFormatException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(UsernameAlreadyExistException.class)
+    public ResponseEntity<Object> handleUsernameAlreadyExistException(UsernameAlreadyExistException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 }

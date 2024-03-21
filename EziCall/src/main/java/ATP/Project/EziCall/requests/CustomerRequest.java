@@ -12,19 +12,19 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CustomerRequest implements Validatable {
 
-    @Pattern(regexp = "^[\\p{Lu}\\p{Ll}][\\p{Ll}]*\\s[\\p{Lu}\\p{Ll}][\\p{Ll}]*\\s[\\p{Lu}\\p{Ll}][\\p{Ll}]*$", message = "Tên phải gồm đúng 3 từ, mỗi từ bắt đầu bằng chữ cái viết hoa")
+    @Pattern(regexp = "^\\p{Lu}\\p{Ll}*(\\s\\p{Lu}\\p{Ll}*)*$", message = "Họ và tên chỉ chứa ký tự là chữ và viết hoa chữ cái đầu")
     private String fullname;
 
     private String gender;
 
     private String email;
 
-    @NotBlank(message = "Không được để trống số điện thoại")
+    @NotBlank(message = "SĐT không được để trống")
+    @Pattern(regexp = "^[0-9]{10}$", message = "Số điện thoại chỉ bao gồm 10 chữ số tự nhiên")
     private String phonenumber;
 
     private String address;
 
-    @NotBlank(message = "Không được để trống tiêu đề")
     private String title;
 
     private String note;

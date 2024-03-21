@@ -10,7 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/auth")
@@ -20,7 +25,15 @@ public class AuthenticationController {
     private AuthenticationService authenticationService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> authenticate(@RequestBody AuthenticationRequest request) {
+    public ResponseEntity<?> authenticate(@Valid @RequestBody AuthenticationRequest request,
+                                          BindingResult result) {
+        if(result.hasErrors()) {
+            List<String> errorMessages = result.getAllErrors()
+                    .stream()
+                    .map(error -> error.getDefaultMessage())
+                    .collect(Collectors.toList());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessages);
+        }
         AuthenticationResponse response = new AuthenticationResponse(authenticationService.authenticate(request));
         return ResponseEntity.ok().body(response.getToken());
     }

@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class CallHistoryDTO {
 
-    private String customerId;
     private String phonenumber;
     private String fullname;
     private LocalDateTime latestCalling;
