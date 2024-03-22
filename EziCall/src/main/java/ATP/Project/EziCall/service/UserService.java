@@ -131,9 +131,11 @@ public class UserService {
         long day = duration.toDays();
         if(day != 0 && acStatus.equalsIgnoreCase("OFFLINE")) {
             activityTime.append(day + " ngày " + duration.toHours() % 24 + " giờ " + duration.toMinutes() % 60 + " phút trước");
+        }else {
+            activityTime.append(duration.toHours() % 24 + " giờ " + duration.toMinutes() % 60 + " phút");
         }
 
-        activityTime.append(duration.toHours() % 24 + " giờ " + duration.toMinutes() % 60 + " phút");
+
 
         return activityTime;
     }
