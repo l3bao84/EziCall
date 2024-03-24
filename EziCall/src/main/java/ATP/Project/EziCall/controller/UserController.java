@@ -75,10 +75,10 @@ public class UserController {
             List<String> errorMessages = result.getAllErrors()
                     .stream()
                     .map(error -> error.getDefaultMessage())
-                    .collect(Collectors.toList());
+                    .toList();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessages);
         }
-        User updatedUser = userService.updateEmployee(id, request);
+        userService.updateEmployee(id, request);
         return ResponseEntity.ok().body("Lưu thành công");
     }
 

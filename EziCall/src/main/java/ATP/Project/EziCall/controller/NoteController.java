@@ -34,7 +34,7 @@ public class NoteController {
             List<String> errorMessages = result.getAllErrors()
                     .stream()
                     .map(error -> error.getDefaultMessage())
-                    .collect(Collectors.toList());
+                    .toList();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessages);
         }
         noteService.appendNoteToTicket(ticketId, request);
@@ -49,7 +49,7 @@ public class NoteController {
             List<String> errorMessages = result.getAllErrors()
                     .stream()
                     .map(error -> error.getDefaultMessage())
-                    .collect(Collectors.toList());
+                    .toList();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessages);
         }
         noteService.updateNote(noteId,request);

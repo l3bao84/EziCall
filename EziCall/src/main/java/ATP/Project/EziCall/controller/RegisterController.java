@@ -33,7 +33,7 @@ public class RegisterController {
             List<String> errorMessages = result.getAllErrors()
                     .stream()
                     .map(error -> error.getDefaultMessage())
-                    .collect(Collectors.toList());
+                    .toList();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessages);
         }else {
             return ResponseEntity.status(HttpStatus.CREATED).body(userService.register(request));

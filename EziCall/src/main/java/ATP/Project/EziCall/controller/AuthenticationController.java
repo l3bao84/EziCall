@@ -33,7 +33,7 @@ public class AuthenticationController {
             List<String> errorMessages = result.getAllErrors()
                     .stream()
                     .map(error -> error.getDefaultMessage())
-                    .collect(Collectors.toList());
+                    .toList();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessages);
         }
         AuthenticationResponse response = new AuthenticationResponse(authenticationService.authenticate(request));

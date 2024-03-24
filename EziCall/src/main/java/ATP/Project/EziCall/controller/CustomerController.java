@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/customers")
@@ -49,7 +48,6 @@ public class CustomerController {
     public ResponseEntity<?> findCustomer(@RequestParam("phone") String phone,
                                          @RequestParam("name") String name) {
         if(customerService.findCustomer(phone,name).isEmpty()) {
-            System.out.println(customerService.findCustomer(phone,name).size());
             return ResponseEntity.ok().body("Không tìm thấy khách hàng phù hợp");
         }
         return ResponseEntity.ok().body(customerService.findCustomer(phone, name));
@@ -75,7 +73,7 @@ public class CustomerController {
             List<String> errorMessages = result.getAllErrors()
                     .stream()
                     .map(error -> error.getDefaultMessage())
-                    .collect(Collectors.toList());
+                    .toList();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessages);
         }
         customerService.insertNewCustomerAndTicket(customerRequest, value);
@@ -90,7 +88,7 @@ public class CustomerController {
             List<String> errorMessages = result.getAllErrors()
                     .stream()
                     .map(error -> error.getDefaultMessage())
-                    .collect(Collectors.toList());
+                    .toList();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessages);
         }
         Customer updatedCustomer = customerService.updateCustomer(id, request);
