@@ -1,0 +1,6 @@
+
+¡	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(’÷˜”ûÿÿÿÿ8ØŸõıæ1J$c73b0129-06b8-45aa-9a21-75377f326c78
+…
+java:S6813"BRemove this field injection and use constructor injection instead.(êæÄŞ8™ùøıæ1J$98cf7fcc-7bb4-4619-b269-d334ee94796b
+œ
+java:S3305"YInject this field value directly into "userDetailsService", the only method that uses it.(×Š¾8›ùøıæ1J$71380c30-0049-4320-9b8d-1ed01d111d33

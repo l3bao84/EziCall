@@ -21,6 +21,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -51,7 +52,12 @@ public class UserService {
     }
 
     public User getUserByUsername() {
-        return userRepository.findByUsername(getAuthenticatedUsername()).get();
+        Optional<User> optionalUser = userRepository.findByUsername(getAuthenticatedUsername());
+        User user = null;
+        if(optionalUser.isPresent()) {
+            user = optionalUser.get();
+        }
+        return user;
     }
 
     public User register(UserRequest request)  {
