@@ -19,8 +19,12 @@ import java.util.stream.Collectors;
 @RequestMapping("/notes")
 public class NoteController {
 
+    private final NoteService noteService;
+
     @Autowired
-    private NoteService noteService;
+    public NoteController(NoteService noteService) {
+        this.noteService = noteService;
+    }
 
     @PostMapping("/{ticketId}")
     public ResponseEntity<?> appendNoteToTicket(@PathVariable String ticketId,

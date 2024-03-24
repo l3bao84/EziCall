@@ -14,35 +14,32 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.List;
 import java.util.Optional;
 
 @Service
 public class AuthenticationService {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
+    private final UserActitityLogRepository userActitityLogRepository;
+    private final UserRepository userRepository;
+    private final RedisService redisService;
+    private final UserService userService;
 
     @Autowired
-    private JwtService jwtService;
-
-    @Autowired
-    private UserActitityLogRepository userActitityLogRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private RedisService redisService;
-
-    @Autowired
-    private UserService userService;
+    public AuthenticationService(AuthenticationManager authenticationManager, JwtService jwtService, UserActitityLogRepository userActitityLogRepository, UserRepository userRepository, RedisService redisService, UserService userService) {
+        this.authenticationManager = authenticationManager;
+        this.jwtService = jwtService;
+        this.userActitityLogRepository = userActitityLogRepository;
+        this.userRepository = userRepository;
+        this.redisService = redisService;
+        this.userService = userService;
+    }
 
     public String authenticate(AuthenticationRequest request) {
         try {

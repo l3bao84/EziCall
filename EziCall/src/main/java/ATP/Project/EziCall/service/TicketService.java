@@ -11,7 +11,6 @@ import ATP.Project.EziCall.repository.NoteRepository;
 import ATP.Project.EziCall.repository.TicketRepository;
 import ATP.Project.EziCall.requests.AddTicketRequest;
 import ATP.Project.EziCall.requests.UpdateTicketRequest;
-import ATP.Project.EziCall.DTO.TicketOverviewDTO;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,20 +23,20 @@ import java.util.List;
 @Service
 public class TicketService {
 
-    @Autowired
-    private TicketRepository ticketRepository;
+    private final TicketRepository ticketRepository;
+    private final NoteService noteService;
+    private final CustomerRepository customerRepository;
+    private final UserService userService;
+    private final NoteRepository noteRepository;
 
     @Autowired
-    private NoteService noteService;
-
-    @Autowired
-    private CustomerRepository customerRepository;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private NoteRepository noteRepository;
+    public TicketService(TicketRepository ticketRepository, NoteService noteService, CustomerRepository customerRepository, UserService userService, NoteRepository noteRepository) {
+        this.ticketRepository = ticketRepository;
+        this.noteService = noteService;
+        this.customerRepository = customerRepository;
+        this.userService = userService;
+        this.noteRepository = noteRepository;
+    }
 
     private final static DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy");
 

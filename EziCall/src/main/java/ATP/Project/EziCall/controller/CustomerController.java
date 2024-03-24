@@ -23,8 +23,12 @@ import java.util.stream.Collectors;
 @RequestMapping("/customers")
 public class CustomerController {
 
+    private final CustomerService customerService;
+
     @Autowired
-    private CustomerService customerService;
+    public CustomerController(CustomerService customerService) {
+        this.customerService = customerService;
+    }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/call-details")

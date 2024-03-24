@@ -20,8 +20,12 @@ import java.util.stream.Collectors;
 @RequestMapping("/tickets")
 public class TicketController {
 
+    private final TicketService ticketService;
+
     @Autowired
-    private TicketService ticketService;
+    public TicketController(TicketService ticketService) {
+        this.ticketService = ticketService;
+    }
 
     @GetMapping("/{ticketId}")
     public ResponseEntity<?> getTicket(@PathVariable String ticketId) {

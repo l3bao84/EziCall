@@ -20,21 +20,24 @@ import java.util.List;
 
 @Service
 public class CustomerService {
+    private final CustomerRepository customerRepository;
+
+    private final DataValidation dataValidation;
+
+    private final TicketService ticketService;
+
+    private final UserService userService;
+
+    private final NoteService noteService;
 
     @Autowired
-    private CustomerRepository customerRepository;
-
-    @Autowired
-    private DataValidation dataValidation;
-
-    @Autowired
-    private TicketService ticketService;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private NoteService noteService;
+    public CustomerService(CustomerRepository customerRepository, DataValidation dataValidation, TicketService ticketService, UserService userService, NoteService noteService) {
+        this.customerRepository = customerRepository;
+        this.dataValidation = dataValidation;
+        this.ticketService = ticketService;
+        this.userService = userService;
+        this.noteService = noteService;
+    }
 
     public List<CustomerDTO> findCustomer(String phonenumber, String name) {
 

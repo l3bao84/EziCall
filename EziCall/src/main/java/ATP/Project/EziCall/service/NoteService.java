@@ -22,14 +22,16 @@ import java.util.List;
 @Service
 public class NoteService {
 
-    @Autowired
-    private TicketRepository ticketRepository;
+    private final TicketRepository ticketRepository;
+    private final NoteRepository noteRepository;
+    private final UserService userService;
 
     @Autowired
-    private NoteRepository noteRepository;
-
-    @Autowired
-    private UserService userService;
+    public NoteService(TicketRepository ticketRepository, NoteRepository noteRepository, UserService userService) {
+        this.ticketRepository = ticketRepository;
+        this.noteRepository = noteRepository;
+        this.userService = userService;
+    }
 
     public String generateNewId(String ticketId) {
         if(noteRepository.findNotesByTicket(ticketId).isEmpty()) {

@@ -3,13 +3,11 @@ package ATP.Project.EziCall.controller;
 import ATP.Project.EziCall.exception.InvalidFormatException;
 import ATP.Project.EziCall.exception.RegistrationFailedException;
 import ATP.Project.EziCall.exception.UsernameAlreadyExistException;
-import ATP.Project.EziCall.models.Role;
 import ATP.Project.EziCall.requests.UserRequest;
 import ATP.Project.EziCall.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,8 +19,12 @@ import java.util.stream.Collectors;
 @RequestMapping("/register")
 public class RegisterController {
 
+    private final UserService userService;
+
     @Autowired
-    private UserService userService;
+    public RegisterController(UserService userService) {
+        this.userService = userService;
+    }
 
     @PostMapping()
     public ResponseEntity<?> register(@Valid @RequestBody UserRequest request,

@@ -1,7 +1,6 @@
 package ATP.Project.EziCall.controller;
 
 import ATP.Project.EziCall.exception.AuthenticationFailedException;
-import ATP.Project.EziCall.models.UserActivityLog;
 import ATP.Project.EziCall.requests.AuthenticationRequest;
 import ATP.Project.EziCall.response.AuthenticationResponse;
 import ATP.Project.EziCall.service.AuthenticationService;
@@ -9,7 +8,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,8 +19,12 @@ import java.util.stream.Collectors;
 @RequestMapping("/auth")
 public class AuthenticationController {
 
+    private final AuthenticationService authenticationService;
+
     @Autowired
-    private AuthenticationService authenticationService;
+    public AuthenticationController(AuthenticationService authenticationService) {
+        this.authenticationService = authenticationService;
+    }
 
     @PostMapping("/login")
     public ResponseEntity<?> authenticate(@Valid @RequestBody AuthenticationRequest request,

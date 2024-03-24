@@ -21,14 +21,16 @@ import java.io.IOException;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    @Autowired
-    private JwtService jwtService;
+    private final JwtService jwtService;
+    private final UserDetailsService userDetailsService;
+    private final RedisService redisService;
 
     @Autowired
-    private UserDetailsService userDetailsService;
-
-    @Autowired
-    private RedisService redisService;
+    public JwtAuthenticationFilter(JwtService jwtService, UserDetailsService userDetailsService, RedisService redisService) {
+        this.jwtService = jwtService;
+        this.userDetailsService = userDetailsService;
+        this.redisService = redisService;
+    }
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
