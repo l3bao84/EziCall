@@ -12,6 +12,7 @@ import ATP.Project.EziCall.models.User;
 import ATP.Project.EziCall.repository.NoteRepository;
 import ATP.Project.EziCall.repository.TicketRepository;
 import ATP.Project.EziCall.requests.AppendNoteRequest;
+import ATP.Project.EziCall.util.AppConstants;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -49,23 +50,21 @@ public class NoteService {
     @Transactional
     public Note createNewNote(Ticket ticket, String content) {
 
-        Note note = Note.builder()
+        return Note.builder()
                 .id(generateNewId(ticket.getTicketId()))
                 .content(content)
                 .notedAt(LocalDateTime.now())
                 .ticket(ticket)
                 .build();
-
-        return note;
     }
 
     @Transactional
     public TicketOverviewDTO appendNoteToTicket(String ticketId, AppendNoteRequest request) {
         Ticket ticket = ticketRepository.findById(ticketId)
-                .orElseThrow(() -> new ObjectNotFoundException("Không tồn tại ticket có id: " + ticketId));
+                .orElseThrow(() -> new ObjectNotFoundException(AppConstants.TICKET_IS_NOT_EXIST));
 
         if(ticket.getStatus().equals(TicketStatus.CLOSED)) {
-            throw new TicketModificationNotAllowedException("Ticket này đã đóng và bạn không thể thêm note mới");
+            throw new TicketModificationNotAllowedException(AppConstants.TICKET_IS_CLOSED);
         }
 
         Note note = createNewNote(ticket, request.getContent());
@@ -78,10 +77,10 @@ public class NoteService {
     public NotesDTO updateNote(String noteId, AppendNoteRequest request) {
 
         Note note = noteRepository.findById(noteId)
-                .orElseThrow(() -> new ObjectNotFoundException("Không tồn tại note có id: " + noteId));
+                .orElseThrow(() -> new ObjectNotFoundException(AppConstants.NOTE_IS_NOT_EXIST));
 
         if(note.getTicket().getStatus().equals(TicketStatus.CLOSED)) {
-            throw new TicketModificationNotAllowedException("Ticket này đã đóng và bạn không thể sửa note này");
+            throw new TicketModificationNotAllowedException(AppConstants.TICKET_IS_CLOSED);
         }
 
         User user = userService.getUserByUsername();
@@ -96,8 +95,8 @@ public class NoteService {
     }
 
     public List<NotesDTO> getNotesByTicketId(String id) {
-        Ticket ticket = ticketRepository.findById(id)
-                .orElseThrow(() -> new ObjectNotFoundException("Không tồn tại ticket có id: " + id));
+        ticketRepository.findById(id)
+                .orElseThrow(() -> new ObjectNotFoundException(AppConstants.TICKET_IS_NOT_EXIST + id));
 
         return noteRepository.getNotesByTicketId(id);
     }

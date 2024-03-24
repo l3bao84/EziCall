@@ -9,6 +9,7 @@ import ATP.Project.EziCall.models.*;
 import ATP.Project.EziCall.repository.CustomerRepository;
 import ATP.Project.EziCall.requests.CustomerRequest;
 import ATP.Project.EziCall.requests.UpdateCustomerRequest;
+import ATP.Project.EziCall.util.AppConstants;
 import ATP.Project.EziCall.util.DataValidation;
 import ATP.Project.EziCall.util.Validatable;
 import jakarta.transaction.Transactional;
@@ -50,7 +51,7 @@ public class CustomerService {
             try {
                 gendr = Gender.valueOf(gender);
             } catch (IllegalArgumentException e) {
-
+                // Giới tính không hợp lệ sẽ bị bỏ qua và không gán giá trị cho gendr
             }
         }
         return customerRepository.findCustomer(phonenumber,name, id, gendr);
@@ -58,7 +59,7 @@ public class CustomerService {
 
     public List<CustomerDTO> getCustomers() {
         if(customerRepository.findAll().isEmpty()) {
-            throw new EmptyListException("Không thấy danh sách khách hàng");
+            throw new EmptyListException(AppConstants.NO_DATA_LIST);
         }
         List<CustomerDTO> customerDTOS = customerRepository.getAll();
         for (CustomerDTO customerDTO:customerDTOS) {
@@ -71,10 +72,8 @@ public class CustomerService {
     }
 
     public CustomerDetailDTO getCustomerById(String id) {
-        CustomerDetailDTO customer = customerRepository.getCustomerById(id)
-                .orElseThrow(() -> new ObjectNotFoundException("Không tồn tại khách hàng có id: " + id));
-
-        return customer;
+        return customerRepository.getCustomerById(id)
+                .orElseThrow(() -> new ObjectNotFoundException(AppConstants.CUS_IS_NOT_EXIST));
     }
 
     private void validateCustomerData(Validatable data) throws InvalidFormatException, RegistrationFailedException {
@@ -122,7 +121,7 @@ public class CustomerService {
         validateCustomerData(customerRequest);
 
         Customer customer = customerRepository.findById(id)
-                .orElseThrow(() -> new ObjectNotFoundException("Không tồn tại khách hàng có id: " + id));
+                .orElseThrow(() -> new ObjectNotFoundException(AppConstants.CUS_IS_NOT_EXIST));
 
         customer.setFullname(customerRequest.getFullname());
         customer.setEmail(customerRequest.getEmail());
@@ -135,7 +134,7 @@ public class CustomerService {
 
     public void removeCustomer(String id) {
         Customer customer = customerRepository.findById(id)
-                .orElseThrow(() -> new ObjectNotFoundException("Không tồn tại khách hàng có id: " + id));
+                .orElseThrow(() -> new ObjectNotFoundException(AppConstants.CUS_IS_NOT_EXIST));
 
         customerRepository.delete(customer);
     }
@@ -146,10 +145,10 @@ public class CustomerService {
 
     public CallHistoryDetailsDTO getCallHistoryDetails(String id) {
         CallHistoryDetailsDTO callHistoryDetailsDTO = customerRepository.getCallHistoryDetails(id)
-                .orElseThrow(() -> new ObjectNotFoundException("Không tồn tại khách hàng có id: " + id));
+                .orElseThrow(() -> new ObjectNotFoundException(AppConstants.CUS_IS_NOT_EXIST));
 
         if(ticketService.getTicketsByCustomerId(id).isEmpty()) {
-            throw new EmptyListException("Không có danh sách ticket");
+            throw new EmptyListException(AppConstants.NO_DATA_LIST);
         }
 
         callHistoryDetailsDTO.setTicketOverviewDTOS(ticketService.getTicketsByCustomerId(id));

@@ -10,6 +10,7 @@ import ATP.Project.EziCall.models.User;
 import ATP.Project.EziCall.repository.UserRepository;
 import ATP.Project.EziCall.requests.UserRequest;
 import ATP.Project.EziCall.DTO.EmployeeDetailDTO;
+import ATP.Project.EziCall.util.AppConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,7 +20,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,8 +30,6 @@ public class UserService {
 
     private final PasswordEncoder passwordEncoder;
 
-    private final static DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
-
     @Autowired
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
@@ -40,18 +38,11 @@ public class UserService {
 
     public String getAuthenticatedUsername() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = null;
 
-        if (authentication != null) {
-            Object principal = authentication.getPrincipal();
-
-            if (principal instanceof UserDetails) {
-                username = ((UserDetails) principal).getUsername();
-            } else {
-                username = principal.toString();
-            }
-        }
-        return username;
+        return Optional.ofNullable(authentication)
+                .map(Authentication::getPrincipal)
+                .map(principal -> principal instanceof UserDetails ? ((UserDetails) principal).getUsername() : principal.toString())
+                .orElse(null);
     }
 
     public User getUserByUsername() {
@@ -66,7 +57,7 @@ public class UserService {
     public User register(UserRequest request)  {
 
         if(userRepository.findByUsername(request.getUsername()).isPresent()) {
-            throw new UsernameAlreadyExistException("Username đã có trong hệ thống");
+            throw new UsernameAlreadyExistException(AppConstants.USERNAME_IS_ALREADY_EXIST);
         }
 
         User user = User.builder()
@@ -82,10 +73,10 @@ public class UserService {
 
     public User updateEmployee(String id, UserRequest request) {
         User existingUser = userRepository.findById(id)
-                .orElseThrow(() -> new ObjectNotFoundException("Không tồn tại nhân viên có id: " + id));
+                .orElseThrow(() -> new ObjectNotFoundException(AppConstants.AGENT_IS_NOT_EXIST));
 
         if(userRepository.findByUsername(request.getUsername()).isPresent()) {
-            throw new UsernameAlreadyExistException("Username đã có trong hệ thống");
+            throw new UsernameAlreadyExistException(AppConstants.USERNAME_IS_ALREADY_EXIST);
         }
 
         existingUser.setUsername(request.getUsername());
@@ -97,7 +88,7 @@ public class UserService {
 
     public void deleteEmployee(String id) {
         User existingUser = userRepository.findById(id)
-                .orElseThrow(() -> new ObjectNotFoundException("Không tồn tại nhân viên có id: " + id));
+                .orElseThrow(() -> new ObjectNotFoundException(AppConstants.AGENT_IS_NOT_EXIST));
 
         userRepository.delete(existingUser);
     }
@@ -114,9 +105,8 @@ public class UserService {
 
     public EmployeeDetailDTO getEmployee(String id) {
 
-        EmployeeDetailDTO existingUser = userRepository.getEmployee(id)
-                .orElseThrow(() -> new ObjectNotFoundException("Không tồn tại nhân viên có id: " + id));
-        return existingUser;
+        return userRepository.getEmployee(id)
+                .orElseThrow(() -> new ObjectNotFoundException(AppConstants.AGENT_IS_NOT_EXIST));
     }
 
     public List<EmployeeDTO> findEmployee(String name, String username, String role, String id) {
@@ -125,7 +115,7 @@ public class UserService {
             try {
                 rol = Role.valueOf(role);
             } catch (IllegalArgumentException e) {
-
+                // Giới tính không hợp lệ sẽ bị bỏ qua và không gán giá trị cho gendr
             }
         }
         return userRepository.findEmployee(name, username, rol, id);
@@ -133,7 +123,7 @@ public class UserService {
 
     private StringBuilder calculateActivityTime(String acStatus, String timestamp) {
 
-        LocalDateTime startTime = LocalDateTime.parse(timestamp, DATE_TIME_FORMATTER);
+        LocalDateTime startTime = LocalDateTime.parse(timestamp, AppConstants.DATE_TIME_FORMATTER);
         Duration duration = Duration.between(startTime, LocalDateTime.now());
 
         StringBuilder activityTime = new StringBuilder();
@@ -144,14 +134,12 @@ public class UserService {
             activityTime.append(duration.toHours() % 24 + " giờ " + duration.toMinutes() % 60 + " phút");
         }
 
-
-
         return activityTime;
     }
 
     public List<EmployeeActivityDTO> getEmployeesActivities(String status) {
         if(userRepository.findAll().isEmpty()) {
-            throw new EmptyListException("Không có nhân viên");
+            throw new EmptyListException(AppConstants.NO_DATA_LIST);
         }
 
         List<EmployeeActivityDTO> employeeActivityDTOS = userRepository.getEmployeesActivities(status);

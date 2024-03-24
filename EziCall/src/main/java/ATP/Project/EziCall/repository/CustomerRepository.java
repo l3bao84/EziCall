@@ -17,8 +17,6 @@ import java.util.Optional;
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer, String> {
 
-    Optional<Customer> findByEmail(String email);
-
     Optional<Customer> findCustomerByPhoneNumber(String phonenumber);
 
     @Query("SELECT new ATP.Project.EziCall.DTO.CustomerDTO(c.customerId, c.fullname, c.phoneNumber, c.gender, (" +

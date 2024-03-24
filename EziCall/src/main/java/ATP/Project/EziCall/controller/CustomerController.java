@@ -4,7 +4,6 @@ import ATP.Project.EziCall.exception.EmptyListException;
 import ATP.Project.EziCall.exception.FieldAlreadyExistException;
 import ATP.Project.EziCall.exception.InvalidFormatException;
 import ATP.Project.EziCall.exception.ObjectNotFoundException;
-import ATP.Project.EziCall.models.Customer;
 import ATP.Project.EziCall.requests.CustomerRequest;
 import ATP.Project.EziCall.requests.UpdateCustomerRequest;
 import ATP.Project.EziCall.service.CustomerService;
@@ -91,7 +90,7 @@ public class CustomerController {
                     .toList();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessages);
         }
-        Customer updatedCustomer = customerService.updateCustomer(id, request);
+        customerService.updateCustomer(id, request);
         return ResponseEntity.ok().body("Cập nhật thông tin khách hàng thành công");
     }
 

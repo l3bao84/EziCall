@@ -37,13 +37,6 @@ public interface UserRepository extends JpaRepository<User, String> {
             "(:id IS NULL OR :id = '' OR u.userId LIKE %:id%)")
     List<EmployeeDTO> findEmployee(@Param("name") String name, @Param("username") String username, @Param("role") Role role, @Param("id") String id);
 
-//    @Query("SELECT new ATP.Project.EziCall.DTO.EmployeeDetailDTO(u.userId, u.fullname, u.username, u.password, u.role," +
-//            "(SELECT CONCAT(a.status, ' ', a.timestamp) FROM UserActivityLog a " +
-//            "WHERE a.user.userId = u.userId AND FUNCTION('DATE', a.timestamp) = FUNCTION('DATE', CURRENT_TIMESTAMP) ORDER BY a.timestamp DESC LIMIT 1))" +
-//            "FROM User u JOIN UserActivityLog a ON u.userId = a.user.userId " +
-//            "WHERE a.status = 'ONLINE' AND FUNCTION('DATE', a.timestamp) = FUNCTION('DATE', CURRENT_TIMESTAMP)")
-//    List<EmployeeDetailDTO> findEmployeeOnline();
-
     @Query("SELECT new ATP.Project.EziCall.DTO.EmployeeActivityDTO(u.userId, u.fullname, " +
             "(SELECT CONCAT(a.status, ' ', a.timestamp) FROM UserActivityLog a WHERE a.user.userId = u.userId " +
             "AND (:status IS NULL OR :status = '' OR a.status = :status) " +

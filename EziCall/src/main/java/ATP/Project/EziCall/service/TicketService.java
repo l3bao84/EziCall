@@ -11,12 +11,12 @@ import ATP.Project.EziCall.repository.NoteRepository;
 import ATP.Project.EziCall.repository.TicketRepository;
 import ATP.Project.EziCall.requests.AddTicketRequest;
 import ATP.Project.EziCall.requests.UpdateTicketRequest;
+import ATP.Project.EziCall.util.AppConstants;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.List;
 
@@ -38,7 +38,6 @@ public class TicketService {
         this.noteRepository = noteRepository;
     }
 
-    private final static DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy");
 
     public String generateNewId() {
 
@@ -56,7 +55,7 @@ public class TicketService {
     @Transactional
     public Ticket createNewTicket(Customer customer, String title, User agent) {
 
-        Ticket ticket = Ticket.builder()
+        return Ticket.builder()
                 .ticketId(generateNewId())
                 .title(title)
                 .customer(customer)
@@ -65,8 +64,6 @@ public class TicketService {
                 .createdAt(LocalDateTime.now())
                 .notes(new HashSet<>())
                 .build();
-
-        return ticket;
     }
 
     @Transactional
@@ -75,7 +72,7 @@ public class TicketService {
         User agent = userService.getUserByUsername();
 
         Customer customer = customerRepository.findCustomerByPhoneNumber(request.getPhonenumber())
-                .orElseThrow(() -> new ObjectNotFoundException("Không tồn tại khách hàng có sđt: " + request.getPhonenumber()));
+                .orElseThrow(() -> new ObjectNotFoundException(AppConstants.CUS_IS_NOT_EXIST));
 
         Ticket ticket = createNewTicket(customer, request.getTitle(), agent);
         ticket.setStatus(TicketStatus.valueOf(request.getStatus()));
@@ -90,15 +87,14 @@ public class TicketService {
 
     public DetailTicketDTO getDetailTicket(String id) {
         DetailTicketDTO detailTicketDTO = ticketRepository.getDetailTicket(id)
-                .orElseThrow(() -> new ObjectNotFoundException("Không tồn tại ticket có id: " + id));
+                .orElseThrow(() -> new ObjectNotFoundException(AppConstants.TICKET_IS_NOT_EXIST));
 
         List<NotesDTO> notesDTOList = noteService.getNotesByTicketId(id);
         for(NotesDTO notesDTO:notesDTOList) {
 
-            DateTimeFormatter originalFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
-            LocalDateTime dateTime = LocalDateTime.parse(notesDTO.getNotedAt(), originalFormatter);
+            LocalDateTime dateTime = LocalDateTime.parse(notesDTO.getNotedAt(), AppConstants.ORIGINAL_FORMATTER);
 
-            notesDTO.setNotedAt(dateTime.format(DATE_TIME_FORMATTER));
+            notesDTO.setNotedAt(dateTime.format(AppConstants.DATE_TIME_FORMATTER));
         }
 
         detailTicketDTO.setNotesDTOList(notesDTOList);
@@ -107,10 +103,10 @@ public class TicketService {
 
     public DetailTicketDTO updateTicket(String id, UpdateTicketRequest updateTicketRequest) {
         Ticket ticket = ticketRepository.findById(id)
-                .orElseThrow(() -> new ObjectNotFoundException("Không tồn tại ticket có id: " + id));
+                .orElseThrow(() -> new ObjectNotFoundException(AppConstants.TICKET_IS_NOT_EXIST));
 
         if(ticket.getStatus().equals(TicketStatus.CLOSED)) {
-            throw new TicketModificationNotAllowedException("Ticket này đã đóng và bạn không thể chỉnh sửa");
+            throw new TicketModificationNotAllowedException(AppConstants.TICKET_IS_CLOSED);
         }
 
         ticket.setTitle(updateTicketRequest.getTitle());
@@ -124,7 +120,7 @@ public class TicketService {
 
     public TicketOverviewDTO closeTicket(String ticketId) {
         Ticket ticket = ticketRepository.findById(ticketId)
-                .orElseThrow(() -> new ObjectNotFoundException("Không tồn tại ticket có id: " + ticketId));
+                .orElseThrow(() -> new ObjectNotFoundException(AppConstants.TICKET_IS_NOT_EXIST));
 
         ticket.setStatus(TicketStatus.CLOSED);
 
@@ -134,7 +130,7 @@ public class TicketService {
 
     public TicketOverviewDTO openTicket(String ticketId) {
         Ticket ticket = ticketRepository.findById(ticketId)
-                .orElseThrow(() -> new ObjectNotFoundException("Không tồn tại ticket có id: " + ticketId));
+                .orElseThrow(() -> new ObjectNotFoundException(AppConstants.AGENT_IS_NOT_EXIST));
 
         ticket.setStatus(TicketStatus.OPEN);
 
@@ -147,10 +143,9 @@ public class TicketService {
 
         for(TicketOverviewDTO ticketOverviewDTO:ticketOverviewDTOS) {
 
-            DateTimeFormatter originalFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
-            LocalDateTime dateTime = LocalDateTime.parse(ticketOverviewDTO.getCreatedAt(), originalFormatter);
+            LocalDateTime dateTime = LocalDateTime.parse(ticketOverviewDTO.getCreatedAt(), AppConstants.ORIGINAL_FORMATTER);
 
-            ticketOverviewDTO.setCreatedAt(dateTime.format(DATE_TIME_FORMATTER));
+            ticketOverviewDTO.setCreatedAt(dateTime.format(AppConstants.DATE_TIME_FORMATTER));
         }
 
         return ticketOverviewDTOS;
@@ -162,10 +157,9 @@ public class TicketService {
 
         for(TicketOverviewDTO ticketOverviewDTO:ticketOverviewDTOS) {
 
-            DateTimeFormatter originalFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
-            LocalDateTime dateTime = LocalDateTime.parse(ticketOverviewDTO.getCreatedAt(), originalFormatter);
+            LocalDateTime dateTime = LocalDateTime.parse(ticketOverviewDTO.getCreatedAt(), AppConstants.ORIGINAL_FORMATTER);
 
-            ticketOverviewDTO.setCreatedAt(dateTime.format(DATE_TIME_FORMATTER));
+            ticketOverviewDTO.setCreatedAt(dateTime.format(AppConstants.DATE_TIME_FORMATTER));
         }
 
         return ticketOverviewDTOS;
@@ -176,10 +170,9 @@ public class TicketService {
 
         for(TicketOverviewDTO ticketOverviewDTO:ticketOverviewDTOS) {
 
-            DateTimeFormatter originalFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
-            LocalDateTime dateTime = LocalDateTime.parse(ticketOverviewDTO.getCreatedAt(), originalFormatter);
+            LocalDateTime dateTime = LocalDateTime.parse(ticketOverviewDTO.getCreatedAt(), AppConstants.ORIGINAL_FORMATTER);
 
-            ticketOverviewDTO.setCreatedAt(dateTime.format(DATE_TIME_FORMATTER));
+            ticketOverviewDTO.setCreatedAt(dateTime.format(AppConstants.DATE_TIME_FORMATTER));
         }
 
         return ticketOverviewDTOS;

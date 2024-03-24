@@ -54,9 +54,7 @@ public class AuthenticationService {
                 userActitityLogRepository.save(new UserActivityLog(user, "ONLINE", LocalDateTime.now()));
             }
 
-            String token = jwtService.generateToken(user);
-
-            return token;
+            return jwtService.generateToken(user);
         } catch (AuthenticationException e) {
             throw new AuthenticationFailedException("Tên đăng nhập hoặc mật khẩu không hợp lệ", e);
         }

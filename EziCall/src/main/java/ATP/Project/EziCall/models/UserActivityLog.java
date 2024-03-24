@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -13,7 +14,7 @@ import java.util.Objects;
 @Table(name = "employee_activity_log")
 @Getter
 @Setter
-public class UserActivityLog {
+public class UserActivityLog implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
