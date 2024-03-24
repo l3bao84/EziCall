@@ -2,7 +2,6 @@ package ATP.Project.EziCall.DTO;
 
 import ATP.Project.EziCall.models.Gender;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.util.List;
 

@@ -3,7 +3,6 @@ package ATP.Project.EziCall.DTO;
 import ATP.Project.EziCall.models.Gender;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
