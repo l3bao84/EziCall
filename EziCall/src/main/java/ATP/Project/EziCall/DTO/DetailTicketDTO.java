@@ -2,12 +2,10 @@ package ATP.Project.EziCall.DTO;
 
 import ATP.Project.EziCall.models.TicketStatus;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Data
-@NoArgsConstructor
 public class DetailTicketDTO {
 
     private String ticketId;

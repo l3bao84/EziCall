@@ -3,11 +3,9 @@ package ATP.Project.EziCall.DTO;
 import ATP.Project.EziCall.models.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 public class EmployeeDetailDTO {
 
     private String id;

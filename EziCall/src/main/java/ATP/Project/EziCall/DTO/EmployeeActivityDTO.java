@@ -1,14 +1,10 @@
 package ATP.Project.EziCall.DTO;
 
-import ATP.Project.EziCall.models.Role;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import lombok.Data;
+
 
 @Data
-@NoArgsConstructor
 public class EmployeeActivityDTO {
 
     private String id;
