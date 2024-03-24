@@ -95,9 +95,9 @@ public class NoteService {
     }
 
     public List<NotesDTO> getNotesByTicketId(String id) {
-        ticketRepository.findById(id)
+        Ticket ticket = ticketRepository.findById(id)
                 .orElseThrow(() -> new ObjectNotFoundException(AppConstants.TICKET_IS_NOT_EXIST + id));
 
-        return noteRepository.getNotesByTicketId(id);
+        return noteRepository.getNotesByTicketId(ticket.getTicketId());
     }
 }
